@@ -1,7 +1,6 @@
 # Samear — Especificação Técnica do MVP
 
-**Versão:** 1.0
-**Última atualização:** maio/2026
+**Versão:** 2.0 (mai/2026) — equação revisada
 **Estratégia:** custo zero até validação com amigos, depois evolução comercial
 
 ---
@@ -39,27 +38,27 @@
 - **Linguagem:** TypeScript
 - **Estilização:** Tailwind CSS
 - **Componentes:** shadcn/ui (componentes copiados, não dependência)
-- **Gráficos:** Recharts (compatibilidade nativa com React)
-- **Forms:** react-hook-form + zod (validação)
-- **Estado global:** Zustand (leve, simples) ou Context API
+- **Gráficos:** Recharts
+- **Forms:** react-hook-form + zod
+- **Estado global:** Zustand (leve) ou Context API
 - **Datas:** date-fns
 - **Ícones:** lucide-react
 
 ### Backend
 - **Database:** PostgreSQL via Supabase
 - **Auth:** Supabase Auth (Google OAuth + email/senha)
-- **API:** Supabase REST + Server Actions do Next.js (sem precisar de backend separado)
+- **API:** Supabase REST + Server Actions do Next.js
 - **Row Level Security:** ativado em todas as tabelas
 
 ### Hospedagem (custo zero inicial)
 - **Frontend:** Vercel (plano Hobby)
 - **Banco/Auth:** Supabase (plano Free)
-- **Domínio:** `samear.vercel.app` no início, domínio próprio quando escalar
+- **Domínio:** `samear.vercel.app` no início
 
 ### Desenvolvimento
 - **Repositório:** GitHub privado `rafaelqrangel/samear`
 - **IDE:** Claude Code (terminal + VS Code extension)
-- **Versionamento:** Git com branches `main` (produção) e `dev` (desenvolvimento)
+- **Versionamento:** Git (`main` produção, `dev` desenvolvimento)
 
 ---
 
@@ -67,47 +66,43 @@
 
 ```
 samear/
-├── app/                          # App Router (Next.js 14)
-│   ├── (auth)/                   # Rotas de autenticação
+├── app/
+│   ├── (auth)/
 │   │   ├── login/page.tsx
 │   │   └── signup/page.tsx
-│   ├── (app)/                    # Área autenticada
-│   │   ├── layout.tsx            # Layout com topbar + navtabs
-│   │   ├── painel/page.tsx       # Painel principal
-│   │   ├── dinheiro/page.tsx     # Aba detalhe financeiro
-│   │   ├── tempo/page.tsx        # Aba detalhe temporal
-│   │   ├── registrar/page.tsx    # Aba de registro (entrada de dados)
-│   │   └── onboarding/page.tsx   # Setup inicial
-│   ├── api/                      # Endpoints customizados (se precisar)
-│   ├── layout.tsx                # Root layout
-│   └── globals.css               # Estilos globais
+│   ├── (app)/
+│   │   ├── layout.tsx
+│   │   ├── painel/page.tsx
+│   │   ├── dinheiro/page.tsx
+│   │   ├── tempo/page.tsx
+│   │   ├── registrar/page.tsx
+│   │   └── onboarding/page.tsx
+│   ├── api/
+│   ├── layout.tsx
+│   └── globals.css
 ├── components/
-│   ├── ui/                       # shadcn/ui components
-│   ├── painel/                   # Componentes específicos do painel
-│   ├── dinheiro/                 # Componentes da aba dinheiro
-│   ├── tempo/                    # Componentes da aba tempo
-│   └── registrar/                # Componentes da aba registrar
+│   ├── ui/
+│   ├── painel/
+│   ├── dinheiro/
+│   ├── tempo/
+│   └── registrar/
 ├── lib/
-│   ├── supabase/                 # Cliente Supabase
-│   │   ├── client.ts             # Browser client
-│   │   └── server.ts             # Server client
-│   ├── calculos/                 # Equações do Samear
-│   │   ├── tempo.ts              # Tb, Tab, Td, Te, Tl, Tt, Tv
-│   │   ├── vh.ts                 # Vh = Receita / Tt
-│   │   ├── riqueza.ts            # Razão Riqueza
-│   │   ├── prosperidade.ts       # Razão Prosperidade
-│   │   └── vida-plena.ts         # Riqueza × Prosperidade
-│   ├── utils.ts                  # Helpers gerais
-│   └── tipos.ts                  # Types TypeScript
+│   ├── supabase/
+│   │   ├── client.ts
+│   │   └── server.ts
+│   ├── calculos/
+│   │   ├── tempo.ts          # Tb, Tab, Tp, Te, Ttl, Tv
+│   │   ├── receita.ts        # R, Ra, Rl
+│   │   ├── vh.ts             # Vhb, Vhl
+│   │   ├── riqueza.ts
+│   │   ├── prosperidade.ts
+│   │   └── vida-plena.ts
+│   ├── utils.ts
+│   └── tipos.ts
 ├── public/
-│   └── samear-logo.svg
 ├── styles/
-│   └── theme.css                 # Variáveis CSS do tema
-├── .env.local                    # Variáveis de ambiente (NÃO comitar)
-├── .env.example                  # Template das variáveis
-├── next.config.js
-├── tailwind.config.ts
-├── tsconfig.json
+├── .env.local
+├── .env.example
 └── README.md
 ```
 
@@ -116,61 +111,60 @@ samear/
 ## 4. Schema do banco (Supabase / PostgreSQL)
 
 ### Tabela `usuarios`
-*Estende `auth.users` do Supabase com dados do Samear.*
 
 ```sql
 CREATE TABLE usuarios (
   id UUID PRIMARY KEY REFERENCES auth.users(id),
   nome TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
-  receita_mensal NUMERIC(10,2),       -- receita bruta declarada no onboarding
-  tt_semanal NUMERIC(5,2),            -- horas trabalhadas/semana (default 40)
-  tab_diario NUMERIC(4,2),            -- horas autocuidado basal/dia (default 10)
-  expectativa_vida INT,               -- ex: 76 (anos)
+
+  -- Tempo (onboarding: 2 perguntas)
+  tt_semanal NUMERIC(5,2),          -- horas brutas de trabalho/semana
+  te_semanal NUMERIC(5,2),          -- horas de atrito no trabalho/semana (deslocamento, reuniões inúteis)
+  tab_diario NUMERIC(4,2) DEFAULT 10, -- autocuidado basal (default 10h)
+  tv_desejada_semanal NUMERIC(5,2), -- alvo: quantas horas/semana de vida desejada
+
+  -- Receita (onboarding: 3 perguntas)
+  receita_bruta NUMERIC(10,2),      -- R
+  ra_impostos NUMERIC(10,2),        -- atrito da receita: impostos
+  ra_operacao NUMERIC(10,2),        -- atrito da receita: custos para trabalhar (transporte, almoço, equipamento)
+
+  expectativa_vida INT,
   data_nascimento DATE,
   criado_em TIMESTAMPTZ DEFAULT NOW(),
   atualizado_em TIMESTAMPTZ DEFAULT NOW()
 );
 
--- RLS: usuário só vê seus próprios dados
 ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "usuario_proprio" ON usuarios
   FOR ALL USING (auth.uid() = id);
 ```
 
 ### Tabela `gastos`
-*Substitui a aba GASTOS do Apps Script.*
 
 ```sql
 CREATE TABLE gastos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   usuario_id UUID NOT NULL REFERENCES usuarios(id),
 
-  -- Quem fez o gasto (pessoa)
-  titular TEXT NOT NULL,              -- ex: "Rafael", "Marcela", "Casa"
-
-  -- O que foi
+  titular TEXT NOT NULL,
   descricao TEXT NOT NULL,
 
-  -- Valores
   valor_total NUMERIC(10,2) NOT NULL,
   valor_parcela NUMERIC(10,2) NOT NULL,
-  perc_pagador NUMERIC(5,2) NOT NULL,     -- 0 a 100
+  perc_pagador NUMERIC(5,2) NOT NULL,
   valor_parcela_pagador NUMERIC(10,2) NOT NULL,
   parcela_num INT NOT NULL DEFAULT 1,
   total_parcelas INT NOT NULL DEFAULT 1,
 
-  -- Categorização (4 caixas)
   categoria TEXT NOT NULL CHECK (categoria IN (
     'manutencao', 'vida', 'investimento', 'atrito'
   )),
 
-  -- Conta pagadora (quem ressarce)
   pagador TEXT NOT NULL,
 
-  -- Referência temporal
-  mes_referencia TEXT NOT NULL,           -- ex: "05 MAI"
-  ano_referencia INT NOT NULL,            -- ex: 2026
+  mes_referencia TEXT NOT NULL,
+  ano_referencia INT NOT NULL,
   data_registro DATE NOT NULL DEFAULT CURRENT_DATE,
 
   criado_em TIMESTAMPTZ DEFAULT NOW()
@@ -185,7 +179,6 @@ CREATE POLICY "gastos_proprios" ON gastos
 ```
 
 ### Tabela `objetivos`
-*Substitui o que hoje não existe — objetivos materiais e de tempo.*
 
 ```sql
 CREATE TABLE objetivos (
@@ -193,17 +186,17 @@ CREATE TABLE objetivos (
   usuario_id UUID NOT NULL REFERENCES usuarios(id),
 
   tipo TEXT NOT NULL CHECK (tipo IN ('material', 'tempo')),
-  nome TEXT NOT NULL,                     -- ex: "Casa em Teresópolis", "Horas com Malu"
+  nome TEXT NOT NULL,
 
-  -- Para objetivos materiais
-  custo_total NUMERIC(12,2),              -- ex: 2.000.000 (casa)
+  -- Materiais
+  custo_total NUMERIC(12,2),
   valor_acumulado NUMERIC(12,2) DEFAULT 0,
   prazo_desejado_meses INT,
 
-  -- Para objetivos de tempo
+  -- Tempo (sem atrito — Tv ainda não vivido)
   horas_atuais_semana NUMERIC(5,2),
   horas_desejadas_semana NUMERIC(5,2),
-  com_quem TEXT,                          -- ex: "Malu", "Marcela"
+  com_quem TEXT,
 
   prioridade INT DEFAULT 1,
   ativo BOOLEAN DEFAULT TRUE,
@@ -215,90 +208,119 @@ CREATE POLICY "objetivos_proprios" ON objetivos
   FOR ALL USING (auth.uid() = usuario_id);
 ```
 
-### Tabela `receitas` (futura)
-*Atualmente receita é campo único no usuário. Tabela criada se precisar histórico.*
-
-```sql
-CREATE TABLE receitas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  usuario_id UUID NOT NULL REFERENCES usuarios(id),
-  fonte TEXT NOT NULL,                    -- ex: "Salário", "Freelance", "Bônus"
-  valor NUMERIC(10,2) NOT NULL,
-  mes_referencia TEXT NOT NULL,
-  ano_referencia INT NOT NULL,
-  recorrente BOOLEAN DEFAULT TRUE,
-  criado_em TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE receitas ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "receitas_proprias" ON receitas
-  FOR ALL USING (auth.uid() = usuario_id);
-```
-
 ---
 
-## 5. As equações em código
+## 5. As equações em código (TypeScript)
 
-Todas em `lib/calculos/`. Funções puras, testáveis isoladamente.
+Todas em `lib/calculos/`. Funções puras, testáveis.
 
 ### `lib/calculos/tempo.ts`
 
 ```typescript
-export function calcularTl(
-  tabDiario: number,
-  teDiario: number = 0
-): { tb: number; tab: number; td: number; te: number; tl: number } {
+// Tempo Produtivo: o que sobra depois do autocuidado basal
+export function calcularTp(tabDiario: number = 10): number {
   const tb = 24;
-  const td = tb - tabDiario;   // Tempo Disponível (ex-Tba)
-  const tl = td - teDiario;
-  return { tb, tab: tabDiario, td, te: teDiario, tl };
+  return tb - tabDiario;
 }
 
-export function distribuirTlSemanal(
-  tlDiario: number,
+// Tempo de Trabalho Líquido: trabalho que de fato gera receita
+export function calcularTtl(ttSemanal: number, teSemanal: number): number {
+  return Math.max(0, ttSemanal - teSemanal);
+}
+
+// Tempo de Vida realizado: o que sobra do Tp após o trabalho
+export function calcularTvReal(
+  tpDiario: number,
   ttSemanal: number
-): { ttSemanal: number; tvSemanal: number; tlSemanal: number } {
-  const tlSemanal = tlDiario * 7;
-  const tvSemanal = tlSemanal - ttSemanal;
-  return { ttSemanal, tvSemanal, tlSemanal };
+): number {
+  const tpSemanal = tpDiario * 7;
+  return Math.max(0, tpSemanal - ttSemanal);
+}
+
+// Razão de prosperidade temporal
+export function razaoTv(tvReal: number, tvDesejado: number): number {
+  if (tvDesejado === 0) return 1;
+  return tvReal / tvDesejado;
+}
+```
+
+### `lib/calculos/receita.ts`
+
+```typescript
+export function calcularRl(
+  receitaBruta: number,
+  raImpostos: number,
+  raOperacao: number
+): number {
+  return Math.max(0, receitaBruta - raImpostos - raOperacao);
+}
+
+export function calcularRaTotal(
+  raImpostos: number,
+  raOperacao: number
+): number {
+  return raImpostos + raOperacao;
 }
 ```
 
 ### `lib/calculos/vh.ts`
 
 ```typescript
-export function calcularVh(
-  receitaMensal: number,
+// Valor da Hora Bruto (ilusão do usuário)
+export function calcularVhb(
+  receitaBruta: number,
   ttSemanal: number
 ): number {
   const ttMensal = ttSemanal * 4.33;
-  return receitaMensal / ttMensal;
+  if (ttMensal === 0) return 0;
+  return receitaBruta / ttMensal;
 }
 
-export function dinheiroEmHoras(valor: number, vh: number): number {
-  return valor / vh;
+// Valor da Hora Líquido (realidade — o que muda decisão)
+export function calcularVhl(
+  receitaLiquida: number,
+  ttlSemanal: number
+): number {
+  const ttlMensal = ttlSemanal * 4.33;
+  if (ttlMensal === 0) return 0;
+  return receitaLiquida / ttlMensal;
+}
+
+// Delta de atrito por hora — o veneno invisível
+export function deltaVh(vhb: number, vhl: number): number {
+  return vhb - vhl;
+}
+
+// Tradução de gasto em horas de vida (usa Vhl para ser honesto)
+export function dinheiroEmHoras(valor: number, vhl: number): number {
+  if (vhl === 0) return 0;
+  return valor / vhl;
 }
 ```
 
 ### `lib/calculos/riqueza.ts`
 
 ```typescript
+// Razão Riqueza: receita líquida vs gastos mensais
 export function razaoRiqueza(
-  receitaMensal: number,
+  receitaLiquida: number,
   gastosMensais: number
 ): number {
-  return receitaMensal / gastosMensais;
+  if (gastosMensais === 0) return 1;
+  return receitaLiquida / gastosMensais;
 }
 ```
 
 ### `lib/calculos/prosperidade.ts`
 
 ```typescript
+// Razão Prosperidade: tempo de vida real vs desejado
 export function razaoProsperidade(
-  tempoDisponivelSemanal: number,
-  tempoDesejadoSemanal: number
+  tvRealSemanal: number,
+  tvDesejadoSemanal: number
 ): number {
-  return tempoDisponivelSemanal / tempoDesejadoSemanal;
+  if (tvDesejadoSemanal === 0) return 1;
+  return tvRealSemanal / tvDesejadoSemanal;
 }
 ```
 
@@ -320,21 +342,55 @@ export function classificarVidaPlena(grau: number): string {
 }
 ```
 
+### `lib/calculos/objetivos.ts`
+
+```typescript
+import { calcularVhl } from './vh';
+
+// Horas necessárias para alcançar objetivo material
+export function horasParaObjetivoMaterial(
+  custoObjetivo: number,
+  vhl: number
+): number {
+  if (vhl === 0) return Infinity;
+  return custoObjetivo / vhl;
+}
+
+// Meses para alcançar, dado o Ttl mensal atual
+export function mesesParaObjetivoMaterial(
+  custoObjetivo: number,
+  vhl: number,
+  ttlMensal: number
+): number {
+  if (ttlMensal === 0 || vhl === 0) return Infinity;
+  const horasNecessarias = custoObjetivo / vhl;
+  return horasNecessarias / ttlMensal;
+}
+
+// Receita anual potencial perdida ao reduzir Tt para aumentar Tv
+export function custoOportunidadeAnual(
+  horasASemanaisRecuperadas: number,
+  vhl: number
+): number {
+  return horasASemanaisRecuperadas * vhl * 52;
+}
+```
+
 ---
 
 ## 6. Fases de desenvolvimento
 
 ### Fase 0 — Setup (1-2 dias)
 - [ ] Criar repositório `samear` no GitHub
-- [ ] Inicializar projeto Next.js 14 com TypeScript + Tailwind
+- [ ] Inicializar Next.js 14 + TypeScript + Tailwind
 - [ ] Instalar shadcn/ui base
 - [ ] Configurar tema (cores, fontes) em `globals.css`
 - [ ] Criar conta Supabase, projeto novo
-- [ ] Configurar `.env.local` com credenciais Supabase
+- [ ] Configurar `.env.local`
 - [ ] Primeiro commit, deploy inicial no Vercel
 
 ### Fase 1 — Frontend com dados mockados (1-2 semanas)
-- [ ] Layout principal com topbar + navtabs (Painel · Dinheiro · Tempo · Registrar)
+- [ ] Layout com topbar + navtabs (Painel · Dinheiro · Tempo · Registrar)
 - [ ] Página Painel com dados estáticos (igual ao protótipo HTML)
 - [ ] Seletor de persona (Rafael/Marcela/Ambos) funcional com mock
 - [ ] Componentes reutilizáveis (cards, barras, badges)
@@ -344,33 +400,33 @@ export function classificarVidaPlena(grau: number): string {
 - [ ] Migrações SQL para criar tabelas no Supabase
 - [ ] Setup Supabase Auth (Google + email)
 - [ ] Páginas de login e signup
-- [ ] Rotas protegidas (middleware do Next.js)
-- [ ] Onboarding básico (coletar receita, Tt semanal, Tab diário)
+- [ ] Rotas protegidas (middleware)
+- [ ] Onboarding (5 perguntas: 2 de tempo, 3 de receita)
 
 ### Fase 3 — Migração de dados (3-5 dias)
-- [ ] Script Node.js para ler planilha do Apps Script via API do Google Sheets
+- [ ] Script Node.js para ler planilha Apps Script via API Google Sheets
 - [ ] Importar gastos retroativos para Supabase
-- [ ] Validar integridade dos dados
-- [ ] Apps Script continua rodando em paralelo durante validação
+- [ ] Validar integridade
+- [ ] Apps Script continua em paralelo durante validação
 
 ### Fase 4 — Painel com dados reais (1-2 semanas)
 - [ ] Conectar Painel ao Supabase
 - [ ] Página Registrar funcional (CRUD de gastos)
 - [ ] Páginas Dinheiro e Tempo com gráficos reais (Recharts)
-- [ ] Cálculo dinâmico de Riqueza, Prosperidade, Vh, Grau de Vida Plena
+- [ ] Cálculo dinâmico de Riqueza, Prosperidade, Vhb/Vhl, Grau de Vida Plena
 
 ### Fase 5 — Validação com Marcela (2 semanas)
-- [ ] Convidar Marcela como segundo usuário
+- [ ] Marcela como segundo usuário
 - [ ] Compartilhamento de dados de casal (modelo a definir)
 - [ ] Iterar UX com feedback dela
 
 ### Fase 6 — Validação com amigos (4 semanas)
-- [ ] Convidar 5-10 amigos selecionados
-- [ ] Coletar feedback estruturado
-- [ ] Refinar conceito e produto
+- [ ] 5-10 amigos selecionados
+- [ ] Feedback estruturado
+- [ ] Refinar produto
 
-### Fase 7 — Preparação para SaaS comercial (futuro)
-- [ ] Stripe para cobrança
+### Fase 7 — Preparação SaaS comercial (futuro)
+- [ ] Stripe
 - [ ] Landing page pública
 - [ ] Onboarding refinado
 - [ ] Plano gratuito + planos pagos
@@ -379,30 +435,28 @@ export function classificarVidaPlena(grau: number): string {
 
 ## 7. Decisões técnicas importantes
 
-### Por que Next.js 14 (App Router)?
-- React Server Components reduzem JavaScript no cliente
-- Server Actions eliminam necessidade de API REST customizada
-- SSG/ISR para landing pages institucionais
+### Por que Next.js 14?
+- React Server Components reduzem JS no cliente
+- Server Actions eliminam API REST customizada
 - Vercel deploy nativo
 
 ### Por que Supabase?
-- PostgreSQL real (não NoSQL fechado como Firebase)
-- Row Level Security nativo — privacidade por padrão
-- Auth integrada com OAuth providers
-- Generoso plano gratuito
-- SQL aberto, migração fácil para AWS RDS depois se precisar
+- PostgreSQL real (não NoSQL fechado)
+- Row Level Security nativo
+- Auth integrada
+- Plano gratuito generoso
+- Migração futura para RDS é direta
 
-### Por que shadcn/ui (não Material UI ou Chakra)?
-- Componentes copiados para o projeto, não dependência
-- Estética customizável (combina com a paleta do Samear)
-- Acessibilidade nativa (Radix UI por baixo)
-- Tamanho de bundle controlado
+### Por que shadcn/ui?
+- Componentes copiados, não dependência
+- Estética customizável
+- Acessibilidade nativa
+- Bundle controlado
 
 ### Por que TypeScript?
-- Refatorações seguras quando o projeto crescer
+- Refatorações seguras
 - Documentação implícita via tipos
-- Pegada de erros em tempo de compilação
-- Padrão de mercado para projetos sérios
+- Pegada de erros em compile time
 
 ---
 
@@ -413,7 +467,7 @@ export function classificarVidaPlena(grau: number): string {
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...      # apenas server-side
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
 
 `.env.example` (commitado):
@@ -428,44 +482,42 @@ SUPABASE_SERVICE_ROLE_KEY=
 
 ## 9. Convenções de código
 
-- **Nomes em português** para tipos, funções e variáveis de domínio (gastos, receita, prosperidade)
-- **Nomes em inglês** para conceitos técnicos universais (useState, useEffect, Button)
-- **Arquivos:** kebab-case (`painel-vida.tsx`, não `PainelVida.tsx`)
+- **Nomes em português** para domínio (gastos, receita, prosperidade)
+- **Nomes em inglês** para conceitos técnicos universais (useState, Button)
+- **Arquivos:** kebab-case
 - **Componentes React:** PascalCase
 - **Funções utilitárias:** camelCase
-- **Sem comentários óbvios** — o código deve falar por si
-- **Comentários explicativos** apenas em decisões não óbvias ou trade-offs
+- **Comentários** apenas em decisões não óbvias
 
 ---
 
 ## 10. Testes (mínimo viável)
 
-- **Equações em `lib/calculos/`:** testar com Jest, casos de borda incluídos
-- **Componentes críticos:** testar renderização com React Testing Library
-- **Não testar:** UI cosmética, integrações com Supabase (custoso de mockar no início)
+- **Equações em `lib/calculos/`:** Jest, casos de borda incluídos
+- **Componentes críticos:** React Testing Library
+- **Não testar:** UI cosmética, integrações Supabase no início
 
 ---
 
-## 11. Checklist de qualidade antes de cada deploy
+## 11. Checklist antes de deploy
 
 - [ ] Build sem warnings (`npm run build`)
 - [ ] Lint passa (`npm run lint`)
-- [ ] Type-check passa (`npm run typecheck`)
-- [ ] Testado em desktop e mobile (Chrome DevTools)
-- [ ] Equações revisadas (Vh, Riqueza, Prosperidade, Vida Plena)
+- [ ] Type-check passa
+- [ ] Testado em desktop e mobile
+- [ ] Equações revisadas (Vhb, Vhl, Riqueza, Prosperidade, Vida Plena)
 - [ ] Sem dados sensíveis commitados
-- [ ] `.env.example` atualizado se nova variável foi adicionada
 
 ---
 
-## 12. Recursos e links
+## 12. Recursos
 
 - **Next.js 14 docs:** https://nextjs.org/docs
 - **Supabase docs:** https://supabase.com/docs
 - **shadcn/ui:** https://ui.shadcn.com
-- **Tailwind CSS:** https://tailwindcss.com/docs
+- **Tailwind:** https://tailwindcss.com/docs
 - **Recharts:** https://recharts.org
 
 ---
 
-*Documento técnico vivo. Atualizar à medida que decisões mudam.*
+*Documento técnico vivo. Atualizar conforme decisões mudam.*
