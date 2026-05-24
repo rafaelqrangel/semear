@@ -67,18 +67,33 @@ Todas as variáveis começam com **T** — gramática unificada que sinaliza: ne
 |-------|------|-----------|
 | **Tb** | Tempo Bruto | 24h por dia. Constante. |
 | **Tab** | Tempo de Autocuidado Basal | Sono, alimentação, higiene vividos com presença. **É VIDA, não entropia.** Fundamentado em Prigogine. |
-| **Tba** | Tempo Bruto após Autocuidado | Tba = Tb − Tab. Potencial bruto para projetos humanos. |
+| **Td** | Tempo Disponível | Td = Tb − Tab. Potencial bruto para projetos humanos. |
 | **Te** | Tempo de Entropia | Atrito, ineficiência, espera estressante. **O cupim.** Fundamentado em Georgescu-Roegen. |
-| **Tl** | Tempo Líquido | Tl = Tba − Te. **O palco real da vida.** |
+| **Tl** | Tempo Líquido | Tl = Td − Te. **O palco real da vida.** |
 | **Tt** | Tempo de Trabalho | Horas dentro de Tl dedicadas a gerar receita. |
 | **Tv** | Tempo de Vida | Horas dentro de Tl dedicadas à vida desejada. |
 | **Vh** | Valor da Hora Trabalhada | Vh = Receita ÷ Tt. Em R$/h. Régua que conecta dinheiro e tempo. |
+
+**Hierarquia:**
+
+```
+Tb (24h)
+├── Tab  →  autocuidado basal (é vida, não desperdício)
+└── Td   →  tempo disponível (Tb − Tab)
+    ├── Te  →  entropia inter-atividades (o cupim)
+    └── Tl  →  tempo líquido (Td − Te) — o palco intencional
+        ├── Tt  →  trabalho (gera receita)
+        └── Tv  →  vida desejada
+```
 
 **Equação central do MVP:**
 
 ```
 Tl = Tt + Tv
 ```
+
+**Nota sobre a posição do Te:**
+Te captura a entropia *entre* atividades — deslocamento improdutivo, espera burocrática, tempo que não é Tab, Tt nem Tv. A entropia *dentro* do Tt (reunião inútil, retrabalho) é uma camada futura do produto. No MVP, o usuário declara seu Tt como bloco de trabalho real; o refino da eficiência interna ao trabalho aparece indiretamente no Vh: cortar a reunião inútil sem perder receita aumenta o Vh — a régua revela o ganho.
 
 Esse é o **cobertor curto da economia termodinâmica**: aumentar um lado obriga reduzir o outro — ou aumentar Vh.
 

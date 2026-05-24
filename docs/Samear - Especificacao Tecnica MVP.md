@@ -92,7 +92,7 @@ samear/
 │   │   ├── client.ts             # Browser client
 │   │   └── server.ts             # Server client
 │   ├── calculos/                 # Equações do Samear
-│   │   ├── tempo.ts              # Tb, Tab, Tba, Te, Tl, Tt, Tv
+│   │   ├── tempo.ts              # Tb, Tab, Td, Te, Tl, Tt, Tv
 │   │   ├── vh.ts                 # Vh = Receita / Tt
 │   │   ├── riqueza.ts            # Razão Riqueza
 │   │   ├── prosperidade.ts       # Razão Prosperidade
@@ -247,11 +247,11 @@ Todas em `lib/calculos/`. Funções puras, testáveis isoladamente.
 export function calcularTl(
   tabDiario: number,
   teDiario: number = 0
-): { tb: number; tab: number; tba: number; te: number; tl: number } {
+): { tb: number; tab: number; td: number; te: number; tl: number } {
   const tb = 24;
-  const tba = tb - tabDiario;
-  const tl = tba - teDiario;
-  return { tb, tab: tabDiario, tba, te: teDiario, tl };
+  const td = tb - tabDiario;   // Tempo Disponível (ex-Tba)
+  const tl = td - teDiario;
+  return { tb, tab: tabDiario, td, te: teDiario, tl };
 }
 
 export function distribuirTlSemanal(
