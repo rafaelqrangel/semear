@@ -8,9 +8,8 @@
 
 1. Abra o Claude Code no terminal dentro da pasta `samear/`
 2. Cole o prompt abaixo (entre as linhas tracejadas) na primeira mensagem
-3. Anexe os três documentos:
+3. Anexe os documentos:
    - `Samear - Briefing Conceitual.md`
-   - `Samear - Especificacao Tecnica MVP.md`
    - `Samear - Painel Visual.html` (o protótipo visual)
 4. Aguarde o Claude Code processar tudo e propor o plano de Fase 0
 
@@ -21,11 +20,9 @@
 ```
 Olá, Claude. Vou trabalhar com você no desenvolvimento do Samear, um SaaS de gestão de vida (não apenas finanças) que estou construindo do zero. Anexei três documentos que carregam todo o pensamento e direção:
 
-1. **Samear - Briefing Conceitual.md** — a alma do projeto. Filosofia, equações, tom de voz, estética. Leia primeiro.
+1. **Samear - Briefing Conceitual.md** — a alma do projeto. Filosofia, tom de voz, estética. Leia primeiro.
 
-2. **Samear - Especificacao Tecnica MVP.md** — stack técnica, arquitetura, schema do banco, fases. Leia segundo.
-
-3. **Samear - Painel Visual.html** — protótipo visual do painel principal, com a estética e UX já validadas. Abra no navegador para ver a referência visual de design.
+2. **Samear - Painel Visual.html** — protótipo visual do painel principal, com a estética e UX já validadas. Abra no navegador para ver a referência visual de design.
 
 **Antes de escrever qualquer linha de código, faça três coisas:**
 
@@ -34,7 +31,6 @@ Olá, Claude. Vou trabalhar com você no desenvolvimento do Samear, um SaaS de g
    - A pergunta-mãe do produto
    - A distinção entre Riqueza e Prosperidade
    - As três bases filosófico-científicas (Aristóteles, Prigogine, Georgescu-Roegen)
-   - A arquitetura temporal (Tb, Tab, Tba, Te, Tl, Tt, Tv, Vh)
    - As quatro caixas do dinheiro (Manutenção, Vida, Investimento, Atrito)
    - O tom de voz (familial, não corporativo, com sabedoria)
    - A estética (paleta pêssego/terra, DM Serif Display + Inter, botões pílula)
@@ -93,7 +89,6 @@ Se o produto começar a virar "mais um app de gastos", reabra o briefing e relem
 Crie uma pasta `docs/` na raiz do projeto e copie para lá:
 
 - `briefing-conceitual.md` (renomeado de `Samear - Briefing Conceitual.md`)
-- `especificacao-tecnica.md` (renomeado de `Samear - Especificacao Tecnica MVP.md`)
 - `painel-visual.html` (renomeado de `Samear - Painel Visual.html`)
 - `documento-conceitual.docx` (o doc longo gerado anteriormente)
 
