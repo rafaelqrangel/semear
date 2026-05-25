@@ -154,6 +154,7 @@ Quem o produto serve tem três déficits sistemáticos:
 
 ## 13. Referências cruzadas
 
+- **Fundação matemática e glossário:** `Samear - Fundacao Matematica.md` ← equações canônicas e siglas
 - **Documento conceitual completo:** `Samear - Documento Conceitual.docx`
 - **Prompt inicial Claude Code:** `Samear - Prompt Inicial Claude Code.md`
 - **Documentação técnica do Apps Script (legado):** `Samear - Documentacao Tecnica AppsScript.md`
