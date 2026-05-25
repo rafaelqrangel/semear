@@ -57,56 +57,55 @@ São grandezas autônomas. Não se substituem. Não se compensam. A **vida plena
 
 ---
 
-## 5. A arquitetura temporal do MVP (versão revisada)
+## 5. A arquitetura temporal do MVP
 
-### Princípio: rigor seletivo
+### Princípio: 24h é o teto intransponível
 
-Atrito é transversal por natureza (Georgescu-Roegen). Mas o Samear **só mede onde o ganho informacional compensa a fricção de registro**. Big atritos sim — deslocamento, impostos, gasolina, reuniões inúteis. Micro atritos não — quanto tempo leva pro restaurante preferido.
-
-> **A regra:** só pergunta se a resposta vai influenciar comportamento. Se vira dado decorativo, não vale.
+Tudo acontece dentro das 24h. Não existe "tempo de vida desejado" como grandeza abstrata — existem **objetivos e rotinas concretas** que o usuário quer ter na sua vida, cada um com uma quantidade de horas. O produto não pergunta "quanto tempo de vida você quer?". Pergunta "você quer passar 10h por semana com a Malu?" — e então calcula se isso cabe no tempo que sobra depois dos compromissos.
 
 ### As variáveis (tempo)
 
 | Sigla | Nome | Descrição |
 |-------|------|-----------|
-| **Tb** | Tempo Bruto | 24h por dia. Constante. |
-| **Tab** | Tempo de Autocuidado Basal | Sono, alimentação, higiene vividos com presença. Fundamentado em Prigogine. **Honrado, não medimos atrito interno.** |
-| **Tp** | Tempo Produtivo | Tp = Tb − Tab. Potencial disponível para projetos humanos. |
-| **Tt** | Tempo de Trabalho (bruto) | Horas dedicadas à atividade remunerada. |
-| **Tv** | Tempo de Vida desejada | Horas dedicadas à vida fora do trabalho (família, projetos, lazer, presença). **Sem atrito, porque ainda é alvo — não foi vivido.** |
-| **Te** | Tempo de Entropia | Atrito identificável dentro do trabalho: deslocamento, reunião inútil, espera burocrática. |
-| **Ttl** | Tempo de Trabalho Líquido | Ttl = Tt − Te. Trabalho que de fato gera receita. |
+| **Tb** | Tempo Bruto | 24h por dia. Constante absoluta. |
+| **Tab** | Autocuidado Basal | Sono, alimentação, higiene vividos com presença. É vida, não custo. |
+| **Tp** | Tempo Produtivo | Tp = Tb − Tab. O que sobra para o mundo. |
+| **Tt** | Tempo de Trabalho | Horas **produtivas** — as que geram receita. Declarado pelo usuário. |
+| **Td** | Tempo de Deslocamento | Horas gastas em trânsito para o trabalho. Não gera receita. Custo estrutural visível. Campo opcional no onboarding. |
+| **Tr** | Tempo Restante | Tr = Tp − Tt − Td. O que sobra para a vida. É dentro do Tr que os objetivos se encaixam — ou não cabem. |
 
-### Por que Tv não tem atrito
+### Regra fundamental do Vh
 
-Tv é a **vida desejada** — projeção, alvo, intenção. Atrito é fenômeno do que **já existe e está acontecendo**. Não se mede o atrito de algo que não aconteceu ainda. Tv é o horizonte; o atrito mora no percurso atual (Tt).
+```
+Vh = Rl ÷ Tt
+```
+
+**Td nunca entra no denominador do Vh.** O deslocamento é custo estrutural — exibi-lo como divisor puniria o usuário por algo que não é ineficiência dele. Td aparece no painel de forma destacada como "custo da jornada", mostrando que a semana de trabalho consome `Tt + Td` horas de vida — mas o valor da hora é calculado apenas sobre as horas que geraram receita.
+
+### O que o painel mostra
+
+- **Jornada real:** Tt + Td horas por semana
+- **Valor da hora:** Rl ÷ Tt
+- **Tempo restante para a vida:** Tr = Tp − Tt − Td
+- **Por objetivo:** horas atuais vs. horas desejadas → gap ou folga
 
 ### As variáveis (dinheiro)
 
 | Sigla | Nome | Descrição |
 |-------|------|-----------|
 | **R** | Receita bruta | Receita declarada mensal. |
-| **Ra** | Receita de Atrito | Impostos + custos obrigatórios para poder trabalhar (transporte, almoço fora obrigatório, equipamento, deslocamento). |
-| **Rl** | Receita Líquida | Rl = R − Ra. O que de fato fica no bolso. |
+| **Ra** | Atrito da receita | Impostos + custos obrigatórios para trabalhar (transporte, almoço, equipamento). |
+| **Rl** | Receita líquida | Rl = R − Ra. O que fica no bolso. |
 
-### As variáveis (hora)
-
-| Sigla | Nome | Descrição |
-|-------|------|-----------|
-| **Vhb** | Valor da Hora Bruto | Vhb = R ÷ Tt. O que o usuário acha que ganha. |
-| **Vhl** | Valor da Hora Líquido | Vhl = Rl ÷ Ttl. O que de fato ganha por hora real de trabalho útil. |
-
-### O delta que muda a vida
-
-A diferença entre Vhb e Vhl é **o veneno invisível** que Georgescu-Roegen descreveu. O usuário acha que ganha R$ 121/h. Depois do atrito, talvez ganhe R$ 78/h. Esse delta — **R$ 43 evaporados por hora** — é o que o Samear escancara.
-
-### Equação central do MVP
+### A revelação central
 
 ```
-Tp = Tt + Tv
+Vh = Rl ÷ Tt
+
+Custo real de qualquer coisa = Valor ÷ Vh  (em horas de vida)
 ```
 
-**O cobertor curto:** aumentar Tt reduz Tv. Caçar Te aumenta Ttl sem mexer em Tt. Aumentar Vhl permite reduzir Tt sem perder receita.
+O usuário acha que ganha R$ 121/h. Depois de impostos e custos do trabalho, talvez ganhe R$ 78/h. Esse delta é o que o Samear escancara — e transforma cada gasto numa pergunta honesta: *quantas horas isso custou?*
 
 ---
 

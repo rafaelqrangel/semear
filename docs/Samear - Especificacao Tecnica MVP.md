@@ -118,16 +118,18 @@ CREATE TABLE usuarios (
   nome TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
 
-  -- Tempo (onboarding: 2 perguntas)
-  tt_semanal NUMERIC(5,2),          -- horas brutas de trabalho/semana
-  te_semanal NUMERIC(5,2),          -- horas de atrito no trabalho/semana (deslocamento, reuniões inúteis)
-  tab_diario NUMERIC(4,2) DEFAULT 10, -- autocuidado basal (default 10h)
-  tv_desejada_semanal NUMERIC(5,2), -- alvo: quantas horas/semana de vida desejada
+  -- Tempo (onboarding)
+  tt_semanal NUMERIC(5,2),              -- horas produtivas de trabalho/semana (obrigatório)
+  td_semanal NUMERIC(5,2) DEFAULT 0,    -- horas de deslocamento/semana (opcional, default 0)
+  tab_diario NUMERIC(4,2) DEFAULT 10,   -- autocuidado basal em horas/dia (default 10h)
+  -- Nota: não existe tv_desejada_semanal como campo global.
+  -- "Tempo de vida desejado" não é uma grandeza — são objetivos concretos
+  -- com horas individuais, armazenados na tabela `objetivos`.
 
-  -- Receita (onboarding: 3 perguntas)
-  receita_bruta NUMERIC(10,2),      -- R
-  ra_impostos NUMERIC(10,2),        -- atrito da receita: impostos
-  ra_operacao NUMERIC(10,2),        -- atrito da receita: custos para trabalhar (transporte, almoço, equipamento)
+  -- Receita (onboarding)
+  receita_bruta NUMERIC(10,2),          -- R: receita bruta mensal declarada
+  ra_impostos NUMERIC(10,2),            -- atrito: impostos e contribuições
+  ra_operacao NUMERIC(10,2),            -- atrito: custos para trabalhar (transporte, almoço, equipamento)
 
   expectativa_vida INT,
   data_nascimento DATE,
@@ -193,7 +195,8 @@ CREATE TABLE objetivos (
   valor_acumulado NUMERIC(12,2) DEFAULT 0,
   prazo_desejado_meses INT,
 
-  -- Tempo (sem atrito — Tv ainda não vivido)
+  -- Para objetivos de tempo: horas atuais vs. desejadas por objetivo concreto
+  -- É aqui que vive o "tempo de vida desejado" — por objetivo, não como grandeza global
   horas_atuais_semana NUMERIC(5,2),
   horas_desejadas_semana NUMERIC(5,2),
   com_quem TEXT,
@@ -217,30 +220,42 @@ Todas em `lib/calculos/`. Funções puras, testáveis.
 ### `lib/calculos/tempo.ts`
 
 ```typescript
-// Tempo Produtivo: o que sobra depois do autocuidado basal
+// Tp: tempo produtivo diário (o que sobra após o autocuidado basal)
 export function calcularTp(tabDiario: number = 10): number {
-  const tb = 24;
-  return tb - tabDiario;
+  return 24 - tabDiario;
 }
 
-// Tempo de Trabalho Líquido: trabalho que de fato gera receita
-export function calcularTtl(ttSemanal: number, teSemanal: number): number {
-  return Math.max(0, ttSemanal - teSemanal);
-}
-
-// Tempo de Vida realizado: o que sobra do Tp após o trabalho
-export function calcularTvReal(
+// Tr: tempo restante para a vida (o que sobra após trabalho e deslocamento)
+// É dentro do Tr que os objetivos concretos se encaixam — ou não cabem.
+export function calcularTr(
   tpDiario: number,
-  ttSemanal: number
+  ttSemanal: number,
+  tdSemanal: number = 0
 ): number {
   const tpSemanal = tpDiario * 7;
-  return Math.max(0, tpSemanal - ttSemanal);
+  return Math.max(0, tpSemanal - ttSemanal - tdSemanal);
 }
 
-// Razão de prosperidade temporal
-export function razaoTv(tvReal: number, tvDesejado: number): number {
-  if (tvDesejado === 0) return 1;
-  return tvReal / tvDesejado;
+// Jornada real: o custo total da semana de trabalho em horas de vida
+// Exibida no painel — nunca usada como denominador do Vh
+export function jornadaReal(ttSemanal: number, tdSemanal: number = 0): number {
+  return ttSemanal + tdSemanal;
+}
+
+// Gap por objetivo de tempo: horas a conquistar por semana
+export function gapObjetivo(
+  horasDesejadas: number,
+  horasAtuais: number
+): number {
+  return Math.max(0, horasDesejadas - horasAtuais);
+}
+
+// Verifica se a soma dos gaps cabe no Tr
+export function objetivosCabem(
+  somaGaps: number,
+  trSemanal: number
+): boolean {
+  return somaGaps <= trSemanal;
 }
 ```
 
@@ -266,35 +281,30 @@ export function calcularRaTotal(
 ### `lib/calculos/vh.ts`
 
 ```typescript
-// Valor da Hora Bruto (ilusão do usuário)
-export function calcularVhb(
-  receitaBruta: number,
+// Vh: valor real da hora de trabalho
+// Denominador = Tt (horas produtivas). Td nunca entra aqui.
+export function calcularVh(
+  receitaLiquida: number,
   ttSemanal: number
 ): number {
   const ttMensal = ttSemanal * 4.33;
   if (ttMensal === 0) return 0;
-  return receitaBruta / ttMensal;
+  return receitaLiquida / ttMensal;
 }
 
-// Valor da Hora Líquido (realidade — o que muda decisão)
-export function calcularVhl(
-  receitaLiquida: number,
-  ttlSemanal: number
+// Tradução de qualquer valor em horas de vida
+export function dinheiroEmHoras(valor: number, vh: number): number {
+  if (vh === 0) return 0;
+  return valor / vh;
+}
+
+// Custo de conquistar horas de um objetivo via trabalho adicional
+export function horasParaObjetivo(
+  custoFinanceiro: number,
+  vh: number
 ): number {
-  const ttlMensal = ttlSemanal * 4.33;
-  if (ttlMensal === 0) return 0;
-  return receitaLiquida / ttlMensal;
-}
-
-// Delta de atrito por hora — o veneno invisível
-export function deltaVh(vhb: number, vhl: number): number {
-  return vhb - vhl;
-}
-
-// Tradução de gasto em horas de vida (usa Vhl para ser honesto)
-export function dinheiroEmHoras(valor: number, vhl: number): number {
-  if (vhl === 0) return 0;
-  return valor / vhl;
+  if (vh === 0) return Infinity;
+  return custoFinanceiro / vh;
 }
 ```
 
