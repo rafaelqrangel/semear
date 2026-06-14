@@ -160,7 +160,7 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
       <div className="space-y-3 pt-2">
         <Link href="/dashboard">
           <Button className="w-full h-14 text-base font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl">
-            Entrar no Samear →
+            Entrar no Semear →
           </Button>
         </Link>
         <Button

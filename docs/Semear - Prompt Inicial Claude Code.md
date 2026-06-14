@@ -1,16 +1,16 @@
 # Prompt Inicial para o Claude Code
 
-**Cole este prompt na sua primeira conversa com o Claude Code, depois de criar o repositório `samear` e abrir ele no VS Code.**
+**Cole este prompt na sua primeira conversa com o Claude Code, depois de criar o repositório `semear` e abrir ele no VS Code.**
 
 ---
 
 ## Como usar
 
-1. Abra o Claude Code no terminal dentro da pasta `samear/`
+1. Abra o Claude Code no terminal dentro da pasta `semear/`
 2. Cole o prompt abaixo (entre as linhas tracejadas) na primeira mensagem
 3. Anexe os documentos:
-   - `Samear - Briefing Conceitual.md`
-   - `Samear - Painel Visual.html` (o protótipo visual)
+   - `Semear - Briefing Conceitual.md`
+   - `Semear - Painel Visual.html` (o protótipo visual)
 4. Aguarde o Claude Code processar tudo e propor o plano de Fase 0
 
 ---
@@ -18,11 +18,11 @@
 ## O Prompt
 
 ```
-Olá, Claude. Vou trabalhar com você no desenvolvimento do Samear, um SaaS de gestão de vida (não apenas finanças) que estou construindo do zero. Anexei três documentos que carregam todo o pensamento e direção:
+Olá, Claude. Vou trabalhar com você no desenvolvimento do Semear, um SaaS de gestão de vida (não apenas finanças) que estou construindo do zero. Anexei três documentos que carregam todo o pensamento e direção:
 
-1. **Samear - Briefing Conceitual.md** — a alma do projeto. Filosofia, tom de voz, estética. Leia primeiro.
+1. **Semear - Briefing Conceitual.md** — a alma do projeto. Filosofia, tom de voz, estética. Leia primeiro.
 
-2. **Samear - Painel Visual.html** — protótipo visual do painel principal, com a estética e UX já validadas. Abra no navegador para ver a referência visual de design.
+2. **Semear - Painel Visual.html** — protótipo visual do painel principal, com a estética e UX já validadas. Abra no navegador para ver a referência visual de design.
 
 **Antes de escrever qualquer linha de código, faça três coisas:**
 
@@ -41,7 +41,7 @@ Olá, Claude. Vou trabalhar com você no desenvolvimento do Samear, um SaaS de g
 - Este projeto evoluirá em fases. Não tente fazer tudo de uma vez.
 - O tom do produto é familial e sábio, não corporativo. Lembre-se disso ao nomear coisas, escrever copy, criar microcopy.
 - A estética é editorial, com peso clássico (Salomão, sabedoria milenar). Não é um app fintech genérico.
-- Já existe um Samear funcionando no Apps Script com dados reais — ele continuará rodando em paralelo durante a transição. Não preciso quebrar nada.
+- Já existe um Semear funcionando no Apps Script com dados reais — ele continuará rodando em paralelo durante a transição. Não preciso quebrar nada.
 - Custo zero é prioridade no início (Vercel Hobby + Supabase Free). Quando crescer, evolui.
 
 Pronto. Comece pela leitura dos documentos e me apresente o plano da Fase 0.
@@ -54,7 +54,7 @@ Pronto. Comece pela leitura dos documentos e me apresente o plano da Fase 0.
 A cada nova fase do projeto (Fase 1, Fase 2, etc.), abra uma nova sessão com o Claude Code e diga:
 
 ```
-Estamos no projeto Samear (já leu os documentos de briefing). Vamos para a Fase [N] da especificação técnica: [nome da fase]. Proponha o plano detalhado.
+Estamos no projeto Semear (já leu os documentos de briefing). Vamos para a Fase [N] da especificação técnica: [nome da fase]. Proponha o plano detalhado.
 ```
 
 O Claude Code vai reler o contexto e propor o próximo passo.
@@ -77,19 +77,19 @@ Em qualquer mudança grande, diga:
 > "Antes de implementar, me explica o que você vai fazer e por quê."
 
 **4. Mostre o painel de referência sempre que falar de UX**
-Quando for criar uma nova tela ou componente, abra o `Samear - Painel Visual.html` no navegador e mostre como deve ficar.
+Quando for criar uma nova tela ou componente, abra o `Semear - Painel Visual.html` no navegador e mostre como deve ficar.
 
 **5. Volte ao briefing conceitual quando se sentir perdido**
 Se o produto começar a virar "mais um app de gastos", reabra o briefing e relembre a pergunta-mãe. O conceito guia tudo.
 
 ---
 
-## Arquivos que devem viver no repositório `samear/docs/`
+## Arquivos que devem viver no repositório `semear/docs/`
 
 Crie uma pasta `docs/` na raiz do projeto e copie para lá:
 
-- `briefing-conceitual.md` (renomeado de `Samear - Briefing Conceitual.md`)
-- `painel-visual.html` (renomeado de `Samear - Painel Visual.html`)
+- `briefing-conceitual.md` (renomeado de `Semear - Briefing Conceitual.md`)
+- `painel-visual.html` (renomeado de `Semear - Painel Visual.html`)
 - `documento-conceitual.docx` (o doc longo gerado anteriormente)
 
 Assim qualquer pessoa que abrir o repositório (você daqui a 6 meses, ou um futuro dev) tem todo o contexto.

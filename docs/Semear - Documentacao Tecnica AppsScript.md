@@ -1,4 +1,4 @@
-# Samear — Documentação Técnica do Apps Script (Legado)
+# Semear — Documentação Técnica do Apps Script (Legado)
 
 **Versão:** v2.4
 **Última atualização:** 17/05/2026
@@ -9,7 +9,7 @@
 
 ## 1. Visão geral
 
-O Samear no Apps Script é o **MVP funcional atual** — onde Rafael e Marcela registram gastos reais da família, validando o conceito do produto na vida real antes de migrar para a stack SaaS.
+O Semear no Apps Script é o **MVP funcional atual** — onde Rafael e Marcela registram gastos reais da família, validando o conceito do produto na vida real antes de migrar para a stack SaaS.
 
 Esta documentação substitui versões anteriores (v1.4) e consolida o estado atual.
 
@@ -24,7 +24,7 @@ Esta documentação substitui versões anteriores (v1.4) e consolida o estado at
 - **Acesso:** URL do Web App salva como atalho no iPhone
 
 ### Fluxo de uso
-1. Usuário toca no atalho Samear no iPhone (ou abre URL no navegador)
+1. Usuário toca no atalho Semear no iPhone (ou abre URL no navegador)
 2. `doGet()` serve `formulario.html`
 3. Usuário escolhe **Registrar** ou **Consultar**
 
@@ -61,7 +61,7 @@ Esta documentação substitui versões anteriores (v1.4) e consolida o estado at
 - `dbContasPagar` — base de transações importadas (legado)
 - `Categorias` — mapeamento de lançamentos para categorias amigáveis
 - `FINANÇAS NOVO` — orçamento familiar mensal, tabela de planejamento
-- **`GASTOS`** — banco de dados principal do Samear (input via Web App)
+- **`GASTOS`** — banco de dados principal do Semear (input via Web App)
 - `GASTOS_FIXOS` — gastos recorrentes do cartão (legado)
 - `BANCO` — controle de pagamentos e fluxo bancário
 
@@ -96,7 +96,7 @@ Esta documentação substitui versões anteriores (v1.4) e consolida o estado at
 
 ### Arquivos no projeto Apps Script
 - `Código.gs` — script independente para importar CSVs para `dbContasPagar`
-- `EnviarGastosOrcamento.gs` — lógica server-side do Samear
+- `EnviarGastosOrcamento.gs` — lógica server-side do Semear
 - `formulario.html` — interface (HTML + CSS + JS vanilla)
 
 ### Funções principais no `EnviarGastosOrcamento.gs`
@@ -179,7 +179,7 @@ Esta documentação substitui versões anteriores (v1.4) e consolida o estado at
 ## 7. Implantação (Web App)
 
 ### Configuração atual
-- **Descrição:** Samear v2.4 — Filtros avançados, ordenação, frases temáticas
+- **Descrição:** Semear v2.4 — Filtros avançados, ordenação, frases temáticas
 - **Executar como:** Eu (Rafael)
 - **Quem pode acessar:** Qualquer pessoa com conta do Google
 
@@ -189,7 +189,7 @@ Esta documentação substitui versões anteriores (v1.4) e consolida o estado at
 3. Implantar → Gerenciar implantações
 4. Editar a implantação atual (ícone lápis)
 5. Versão: Nova versão
-6. Descrição: `Samear vX.Y — [mudança]`
+6. Descrição: `Semear vX.Y — [mudança]`
 7. Implantar
 
 A URL não muda entre versões. Atalhos no iPhone continuam funcionando.
@@ -233,7 +233,7 @@ Tudo está em uma única planilha. Não há separação de dados por usuário. *
 - Pequenos ajustes de UX se necessário
 
 ### Quando migrar
-- Quando o novo Samear (Next.js + Supabase) estiver com Painel + Registrar funcionais
+- Quando o novo Semear (Next.js + Supabase) estiver com Painel + Registrar funcionais
 - Exportar dados da aba GASTOS em CSV
 - Importar para a tabela `gastos` no Supabase via script único
 - Apps Script entra em modo somente-leitura para arquivo histórico
@@ -247,10 +247,10 @@ Tudo está em uma única planilha. Não há separação de dados por usuário. *
 
 ## 10. Referências cruzadas
 
-- **Briefing conceitual completo:** `Samear - Briefing Conceitual.md`
-- **Especificação técnica do MVP (Next.js):** `Samear - Especificacao Tecnica MVP.md`
-- **Prompt inicial para Claude Code:** `Samear - Prompt Inicial Claude Code.md`
-- **Painel visual de referência:** `Samear - Painel Visual.html`
+- **Briefing conceitual completo:** `Semear - Briefing Conceitual.md`
+- **Especificação técnica do MVP (Next.js):** `Semear - Especificacao Tecnica MVP.md`
+- **Prompt inicial para Claude Code:** `Semear - Prompt Inicial Claude Code.md`
+- **Painel visual de referência:** `Semear - Painel Visual.html`
 
 ---
 

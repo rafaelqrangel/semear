@@ -1,4 +1,4 @@
-# Samear — Briefing Conceitual
+# Semear — Briefing Conceitual
 
 **Documento mestre do projeto. Leia antes de qualquer linha de código.**
 **Versão:** 3.0 (mai/2026) — conceito puro, cálculos em revisão
@@ -6,15 +6,15 @@
 
 ---
 
-## 1. O que é o Samear
+## 1. O que é o Semear
 
-Samear é um SaaS em construção que responde a uma única pergunta:
+Semear é um SaaS em construção que responde a uma única pergunta:
 
 > **"Estou conseguindo viver a vida que quero, ou estou apenas trabalhando para tê-la algum dia?"**
 
-Diferente dos aplicativos de finanças tradicionais — que perguntam *"quanto você gastou este mês?"* e devolvem gráficos —, o Samear trata o dinheiro como coadjuvante de algo maior: **o tempo de vida que ainda resta para viver**.
+Diferente dos aplicativos de finanças tradicionais — que perguntam *"quanto você gastou este mês?"* e devolvem gráficos —, o Semear trata o dinheiro como coadjuvante de algo maior: **o tempo de vida que ainda resta para viver**.
 
-O nome *Samear* combina *Same* (junto) + *Ar* — e lê-se também como *semear*. Está em consideração mudar para um nome inspirado na linhagem salomônica (Salomão, sabedoria aplicada).
+O nome *Semear* combina *Same* (junto) + *Ar* — e lê-se também como *semear*. Está em consideração mudar para um nome inspirado na linhagem salomônica (Salomão, sabedoria aplicada).
 
 ---
 
@@ -42,16 +42,16 @@ São grandezas autônomas. Não se substituem. Não se compensam. A **vida plena
 ### 4.1 Aristóteles — Potência e Ato
 - **Dynamis** (potência): capacidade de vir a ser
 - **Energeia** (ato): essa capacidade realizada
-- No Samear: **Recursos** = dynamis (potência financeira). **Tempo para aplicar** = condição para energeia (vida vivida).
+- No Semear: **Recursos** = dynamis (potência financeira). **Tempo para aplicar** = condição para energeia (vida vivida).
 
 ### 4.2 Ilya Prigogine — Estruturas Dissipativas
 - Nobel de Química 1977. Sistemas vivos só se mantêm consumindo energia para preservar sua ordem interna contra o caos.
-- No Samear: o **Autocuidado Basal** (sono, alimentação, higiene com presença) **não é entropia, é vida** — é o gasto obrigatório de manutenção da estrutura viva.
+- No Semear: o **Autocuidado Basal** (sono, alimentação, higiene com presença) **não é entropia, é vida** — é o gasto obrigatório de manutenção da estrutura viva.
 
 ### 4.3 Nicholas Georgescu-Roegen — Entropia Econômica
 - Livro: *The Entropy Law and the Economic Process* (1971).
 - Processos da sociedade moderna geram atritos estruturais. **Atrito é transversal: existe dentro de cada processo de uso de recursos, não como categoria à parte.**
-- No Samear: o **Atrito** é o cupim. Engarrafamento, espera burocrática, deslocamento dissipativo, impostos, multas, juros, reuniões inúteis.
+- No Semear: o **Atrito** é o cupim. Engarrafamento, espera burocrática, deslocamento dissipativo, impostos, multas, juros, reuniões inúteis.
 
 **Slogan-síntese do produto:** *"O atrito é o cupim do tempo e do dinheiro."*
 
@@ -72,7 +72,7 @@ Todo real que sai cai em uma das quatro caixas:
 
 A maioria dos apps pergunta: *"como você está usando seu tempo?"*
 
-O Samear pergunta: *"quanto do seu tempo está sendo de fato vivido?"*
+O Semear pergunta: *"quanto do seu tempo está sendo de fato vivido?"*
 
 A diferença é existencial. O sistema **honra** o autocuidado, identifica o trabalho que gera valor versus o atrito do trabalho, e mostra a distância da vida desejada. O usuário não se sente cobrado — se sente respeitado.
 
@@ -140,7 +140,7 @@ Quem o produto serve tem três déficits sistemáticos:
 
 ---
 
-## 12. O que NÃO é o Samear
+## 12. O que NÃO é o Semear
 
 - ❌ Não é um app de gastos
 - ❌ Não é uma planilha bonita
@@ -148,17 +148,17 @@ Quem o produto serve tem três déficits sistemáticos:
 - ❌ Não é um app de produtividade que otimiza tempo
 - ❌ Não é mais um agregador de contas bancárias
 
-**O Samear é um espelho.** Um sistema que mostra com clareza matemática e estética a distância entre a vida que o usuário gera e a vida que ele diz querer viver — e o ajuda a navegar essa distância com sabedoria.
+**O Semear é um espelho.** Um sistema que mostra com clareza matemática e estética a distância entre a vida que o usuário gera e a vida que ele diz querer viver — e o ajuda a navegar essa distância com sabedoria.
 
 ---
 
 ## 13. Referências cruzadas
 
-- **Fundação matemática e glossário:** `Samear - Fundacao Matematica.md` ← equações canônicas e siglas
-- **Documento conceitual completo:** `Samear - Documento Conceitual.docx`
-- **Prompt inicial Claude Code:** `Samear - Prompt Inicial Claude Code.md`
-- **Documentação técnica do Apps Script (legado):** `Samear - Documentacao Tecnica AppsScript.md`
-- **Painel visual de referência:** `Samear - Painel Visual.html`
+- **Fundação matemática e glossário:** `Semear - Fundacao Matematica.md` ← equações canônicas e siglas
+- **Documento conceitual completo:** `Semear - Documento Conceitual.docx`
+- **Prompt inicial Claude Code:** `Semear - Prompt Inicial Claude Code.md`
+- **Documentação técnica do Apps Script (legado):** `Semear - Documentacao Tecnica AppsScript.md`
+- **Painel visual de referência:** `Semear - Painel Visual.html`
 
 ---
 

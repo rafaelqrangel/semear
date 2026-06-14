@@ -16,7 +16,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Samear — Arquiteto da Vida',
+  title: 'Semear — Arquiteto da Vida',
   description: 'Descubra o valor do seu tempo e construa a vida que você quer.',
 }
 

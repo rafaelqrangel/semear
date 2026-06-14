@@ -2,7 +2,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#fdeee4] flex items-center justify-center px-6">
       <div className="text-center space-y-4 max-w-sm">
-        <span className="font-serif text-[#2d2620] text-2xl">samear</span>
+        <span className="font-serif text-[#2d2620] text-2xl">semear</span>
         <h1 className="font-serif text-3xl text-[#2d2620]">
           Dashboard em<br />
           <span className="font-serif-italic">construção.</span>

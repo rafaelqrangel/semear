@@ -1,5 +1,5 @@
 // ============================================================
-// Samear — Tipos centrais
+// Semear — Tipos centrais
 // ============================================================
 
 export interface OnboardingData {
@@ -33,7 +33,7 @@ export interface DespesaItem {
   valor: number
 }
 
-export interface IndicadoresSamear {
+export interface IndicadoresSemear {
   // Tempo
   tb: number       // 24 * 7 = 168h/semana (constante)
   tab: number      // autocuidado semanal

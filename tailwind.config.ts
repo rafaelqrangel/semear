@@ -24,7 +24,7 @@ const config: Config = {
         border:      "var(--border)",
         input:       "var(--input)",
         ring:        "var(--ring)",
-        // Paleta Samear direta
+        // Paleta Semear direta
         peach:    "#fdeee4",
         "peach-mid": "#f5d9c8",
         brown:    "#2d2620",
@@ -33,7 +33,7 @@ const config: Config = {
         mocha:    "#8b6f5c",
         sage:     "#6fa572",
         terra:    "#a32d2d",
-        "green-samear": "#2d7a4a",
+        "green-semear": "#2d7a4a",
       },
       borderRadius: {
         lg: "var(--radius)",

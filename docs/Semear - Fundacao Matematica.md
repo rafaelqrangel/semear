@@ -1,10 +1,10 @@
-# Samear — Fundação Matemática e Glossário
+# Semear — Fundação Matemática e Glossário
 
 **Documento de referência dos conceitos matemáticos aplicados no SaaS.**
 **Versão:** 2.0 (mai/2026)
 **Base literária:** Gustavo Cerbasi · Alexandre Assaf Neto · Brian Portnoy
 
-> Este documento descreve todas as variáveis, equações e indicadores que movem o Samear por dentro. O usuário nunca vê esses termos — ele vê frases, termômetros e mensagens. Este documento existe para que desenvolvedores, designers e o time de produto falem a mesma língua.
+> Este documento descreve todas as variáveis, equações e indicadores que movem o Semear por dentro. O usuário nunca vê esses termos — ele vê frases, termômetros e mensagens. Este documento existe para que desenvolvedores, designers e o time de produto falem a mesma língua.
 
 ---
 
@@ -13,7 +13,7 @@
 > **"A verdadeira riqueza não é medida em moeda, mas sim na quantidade de tempo livre que essa moeda consegue financiar."**
 > — síntese de Portnoy + Cerbasi + Assaf Neto
 
-O Samear cruza duas dimensões autônomas:
+O Semear cruza duas dimensões autônomas:
 
 - **RIQUEZA** → dimensão financeira e patrimonial
 - **PROSPERIDADE** → dimensão de tempo livre
@@ -43,7 +43,7 @@ A vida plena só existe quando ambas coexistem. Ter dinheiro sem tempo, ou tempo
 |-------|--------------|-----------------|
 | **R** | Receita Bruta | Tudo que entra: salário, freelance, aluguéis, renda passiva, pensão, qualquer fonte. |
 | **Ra** | Atrito da Receita | O que o sistema retira antes mesmo de o dinheiro chegar ao bolso: impostos, contribuições obrigatórias e custos estruturais do trabalho (transporte obrigatório, almoço fora, ferramentas indispensáveis). |
-| **Rl** | Receita Líquida | O que efetivamente entra no bolso do usuário após o atrito estrutural. É a base de todos os cálculos do Samear. |
+| **Rl** | Receita Líquida | O que efetivamente entra no bolso do usuário após o atrito estrutural. É a base de todos os cálculos do Semear. |
 
 ### 2.3 Dimensão Financeira — As 4 Caixas
 
@@ -81,7 +81,7 @@ Todo real que sai do bolso cai em uma das quatro caixas abaixo. Quando o Saldo �
 |-------|--------------|-----------------|
 | **TN** | Taxa Nominal | A taxa de rendimento que os bancos anunciam. Não reflete o poder de compra real. |
 | **Inf** | Inflação | O percentual de desvalorização da moeda ao longo do tempo. |
-| **TR** | Taxa Real | A taxa de rendimento que de fato aumenta o poder de compra, descontando a inflação. É a única taxa usada nas projeções do Samear. |
+| **TR** | Taxa Real | A taxa de rendimento que de fato aumenta o poder de compra, descontando a inflação. É a única taxa usada nas projeções do Semear. |
 | **PV** | Valor Presente | Quanto vale hoje um valor que será recebido ou pago no futuro. |
 | **FV** | Valor Futuro | Para quanto crescerá um valor presente, dado um rendimento e um prazo. |
 | **n** | Prazo | Número de meses ou anos de uma projeção. |
@@ -150,7 +150,7 @@ Rl = R − Ra
 ```
 **O que diz:** "Do total que você ganha, subtraímos tudo que o sistema retira antes de você ver o dinheiro. O que sobra é o que realmente é seu."
 
-O usuário acha que ganha R$ 10.000/mês. Mas depois de impostos e custos para poder trabalhar, talvez receba R$ 7.200. Essa diferença é o primeiro choque de realidade do Samear.
+O usuário acha que ganha R$ 10.000/mês. Mas depois de impostos e custos para poder trabalhar, talvez receba R$ 7.200. Essa diferença é o primeiro choque de realidade do Semear.
 
 ---
 
@@ -204,7 +204,7 @@ ML = PL / C
 **O que diz:** "Se você parasse de trabalhar agora, por quantos meses conseguiria manter sua vida com o que tem acumulado?"
 
 Frontend: *"Seu patrimônio atual garante sua paz por X meses."*
-Este indicador converte riqueza em tempo — a moeda real do Samear.
+Este indicador converte riqueza em tempo — a moeda real do Semear.
 
 ---
 
@@ -215,7 +215,7 @@ TR = (1 + TN) / (1 + Inf) − 1
 ```
 **O que diz:** "A taxa que o banco anuncia não desconta a inflação. A Taxa Real é o quanto seu dinheiro de fato cresceu em poder de compra."
 
-Toda projeção do Samear usa TR, nunca TN. Mostrar projeções com taxa nominal seria enganar o usuário.
+Toda projeção do Semear usa TR, nunca TN. Mostrar projeções com taxa nominal seria enganar o usuário.
 
 Frontend: *"Seu investimento rende X% ao ano. Com a inflação, o ganho real é Y%."*
 
@@ -280,7 +280,7 @@ Frontend: *"Para nunca mais precisar trabalhar, você precisa de R$ X investidos
 
 ## 4. O Cruzamento — Riqueza e Prosperidade
 
-O indicador-síntese do Samear não é um número único — é a posição do usuário em dois eixos simultâneos:
+O indicador-síntese do Semear não é um número único — é a posição do usuário em dois eixos simultâneos:
 
 ```
 Eixo X (Riqueza)      → GIF (0% a 100%+)
@@ -294,7 +294,7 @@ Eixo Y (Prosperidade) → ML (Meses de Liberdade)
 | Zona azul | Baixo | Alto | Patrimônio acumulado, mas sem renda passiva. | Fase 3: Ativar |
 | Zona verde | Alto | Alto | Contentamento financiado. Trabalho é escolha. | Chegada |
 
-**O Samear não julga onde o usuário está. Ele mostra a distância e ilumina o caminho.**
+**O Semear não julga onde o usuário está. Ele mostra a distância e ilumina o caminho.**
 
 ---
 

@@ -50,7 +50,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-[#fdeee4] flex flex-col">
       {/* Header */}
       <header className="px-6 pt-8 pb-4 flex items-center justify-between max-w-lg mx-auto w-full">
-        <span className="font-serif text-[#2d2620] text-xl tracking-wide">samear</span>
+        <span className="font-serif text-[#2d2620] text-xl tracking-wide">semear</span>
         {etapa !== 'resultado' && (
           <span className="text-[#8b6f5c] text-sm font-medium">
             {etapa} de 5

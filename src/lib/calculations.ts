@@ -1,9 +1,9 @@
 // ============================================================
-// Samear — Fundação Matemática
+// Semear — Fundação Matemática
 // Todas as equações ficam aqui. O frontend nunca exibe siglas.
 // ============================================================
 
-import type { OnboardingData, IndicadoresSamear } from '@/types'
+import type { OnboardingData, IndicadoresSemear } from '@/types'
 
 const SEMANAS_POR_MES = 4.33
 const HORAS_DIA = 24
@@ -16,7 +16,7 @@ export const TB_SEMANAL = HORAS_DIA * DIAS_SEMANA // 168h
  * Calcula todos os indicadores a partir dos dados de onboarding.
  * Aceita dados parciais — campos ausentes retornam 0.
  */
-export function calcularIndicadores(dados: Partial<OnboardingData>): IndicadoresSamear {
+export function calcularIndicadores(dados: Partial<OnboardingData>): IndicadoresSemear {
   const tt = dados.tt ?? 0
   const tab_sono = dados.tab_sono ?? 8
   const tab_rotina = dados.tab_rotina ?? 2
