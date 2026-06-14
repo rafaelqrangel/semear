@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paleta Samear */
+    --peach:      #fdeee4;
+    --peach-mid:  #f5d9c8;
+    --brown:      #2d2620;
+    --rose:       #d4807a;
+    --rose-pale:  #f5e0de;
+    --mocha:      #8b6f5c;
+    --sage:       #6fa572;
+    --terra:      #a32d2d;
+    --green:      #2d7a4a;
+
+    /* shadcn tokens mapeados para a paleta */
+    --background:       var(--peach);
+    --foreground:       var(--brown);
+    --card:             #ffffff;
+    --card-foreground:  var(--brown);
+    --primary:          var(--rose);
+    --primary-foreground: #ffffff;
+    --secondary:        var(--peach-mid);
+    --secondary-foreground: var(--brown);
+    --muted:            var(--peach-mid);
+    --muted-foreground: var(--mocha);
+    --accent:           var(--rose-pale);
+    --accent-foreground: var(--brown);
+    --destructive:      var(--terra);
+    --border:           #e8d8ce;
+    --input:            #ffffff;
+    --ring:             var(--rose);
+    --radius:           0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-[#fdeee4] text-[#2d2620] font-sans;
+  }
+}
+
+/* Utilitários de fonte */
+.font-serif {
+  font-family: var(--font-serif), 'DM Serif Display', Georgia, serif;
+}
+
+.font-serif-italic {
+  font-family: var(--font-serif), 'DM Serif Display', Georgia, serif;
+  font-style: italic;
+}
+
+/* Campo monetário */
+.money-input {
+  font-size: 1.375rem;
+  font-weight: 300;
+  color: var(--brown);
+  font-family: var(--font-sans);
+}
+
+.money-input::placeholder {
+  color: #ccc;
+}
+
+/* Animação de entrada suave */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in-up {
+  animation: fadeSlideUp 0.35s ease-out forwards;
+}
