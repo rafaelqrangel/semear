@@ -1,63 +1,75 @@
 # Semear — Briefing Conceitual
 
 **Documento mestre do projeto. Leia antes de qualquer linha de código.**
-**Versão:** 3.0 (mai/2026) — conceito puro, cálculos em revisão
+**Versão:** 4.0 (jun/2026) — virada para design de vida e design comportamental
 **Mantenedor conceitual:** Rafael Q. Rangel + Claude (chat)
 
 ---
 
 ## 1. O que é o Semear
 
-Semear é um SaaS em construção que responde a uma única pergunta:
+O Semear é um **app de design de vida**. Você declara um objetivo, e ele compila esse objetivo em comportamentos minúsculos e executáveis — mostrando, a cada passo, se a sua intenção continua apontada para a vida que você deseja.
 
-> **"Estou conseguindo viver a vida que quero, ou estou apenas trabalhando para tê-la algum dia?"**
+Diferente dos aplicativos de finanças tradicionais — que perguntam *"quanto você gastou este mês?"* e devolvem gráficos —, o Semear trata o dinheiro como um recurso a serviço de algo maior: a **intenção materializada em comportamento**, ao longo do tempo de vida que ainda resta para viver.
 
-Diferente dos aplicativos de finanças tradicionais — que perguntam *"quanto você gastou este mês?"* e devolvem gráficos —, o Semear trata o dinheiro como coadjuvante de algo maior: **o tempo de vida que ainda resta para viver**.
-
-O nome *Semear* combina *Same* (junto) + *Ar* — e lê-se também como *semear*. Está em consideração mudar para um nome inspirado na linhagem salomônica (Salomão, sabedoria aplicada).
+O nome lê-se como **semear**: plantar hoje, conscientemente, o que dará vida amanhã.
 
 ---
 
-## 2. A pergunta-mãe do produto
+## 2. A pergunta que organiza o produto
 
-Toda decisão de produto — métrica, painel, módulo, copy, microcopy — precisa responder a:
+Toda decisão de produto — métrica, painel, módulo, copy, microcopy — precisa responder a uma pergunta de **vetor**, não de saldo:
 
-> **Qual é a distância entre o que você gera e o que você quer ter, ser e viver?**
+> **O seu trabalho, o seu tempo e o seu dinheiro estão em direção à vida que você deseja — ou em sentido contrário?**
 
-Não é pergunta financeira. É pergunta existencial com consequências financeiras.
+E a forma mais curta e operacional dela, herdada da reflexão sobre tempo e dinheiro:
 
----
+> **Está apontado?**
 
-## 3. A definição-axioma (pedra fundamental)
-
-> **Rico é aquele que tem os recursos para viver aquilo que precisa.**
-> **Próspero é aquele que tem tempo para aplicar tais recursos.**
-
-São grandezas autônomas. Não se substituem. Não se compensam. A **vida plena** só existe quando ambas estão presentes simultaneamente.
+Não é pergunta financeira. É pergunta existencial com consequências financeiras. Não importa só *quanto* você acumulou; importa *para onde* está apontado.
 
 ---
 
-## 4. As três bases filosófico-científicas
+## 3. A tríade — Tempo, Dinheiro, Intenção
 
-### 4.1 Aristóteles — Potência e Ato
-- **Dynamis** (potência): capacidade de vir a ser
-- **Energeia** (ato): essa capacidade realizada
-- No Semear: **Recursos** = dynamis (potência financeira). **Tempo para aplicar** = condição para energeia (vida vivida).
+São os três elementos da arquitetura de vida do Semear.
 
-### 4.2 Ilya Prigogine — Estruturas Dissipativas
-- Nobel de Química 1977. Sistemas vivos só se mantêm consumindo energia para preservar sua ordem interna contra o caos.
-- No Semear: o **Autocuidado Basal** (sono, alimentação, higiene com presença) **não é entropia, é vida** — é o gasto obrigatório de manutenção da estrutura viva.
+- **Tempo** — o *momentum* em si. Recurso **não acumulável**. Tê-lo já é gastá-lo; a posse é idêntica ao gasto. É irreversível.
+- **Dinheiro** — a matéria-prima materializada que permite materializar objetivos que ainda estão no plano das ideias. É **reversível e acumulável**. Não tem uso próprio; por não servir a nada em si, serve a tudo.
+- **Intenção** — o vértice. O portal onde o plano das ideias e o plano material se unem, e onde uma entre infinitas possibilidades se converge no tempo e se torna real.
 
-### 4.3 Nicholas Georgescu-Roegen — Entropia Econômica
-- Livro: *The Entropy Law and the Economic Process* (1971).
-- Processos da sociedade moderna geram atritos estruturais. **Atrito é transversal: existe dentro de cada processo de uso de recursos, não como categoria à parte.**
-- No Semear: o **Atrito** é o cupim. Engarrafamento, espera burocrática, deslocamento dissipativo, impostos, multas, juros, reuniões inúteis.
+**A lei que ordena tudo:** o dinheiro existe para proteger o tempo, nunca o contrário. O dinheiro esvaziado se reenche; o tempo, não.
 
-**Slogan-síntese do produto:** *"O atrito é o cupim do tempo e do dinheiro."*
+**O erro que o produto combate não é guardar — é adiar a intenção.** Capital sem direção é tempo que você entregou para outro viver no seu lugar. Por isso a disciplina cabe na pergunta única: não se o dinheiro está parado ou rendendo, mas se ele está **apontado**.
 
 ---
 
-## 5. As quatro caixas do dinheiro
+## 4. O comportamento é a intenção materializada
+
+A intenção atravessa um portal para virar matéria. Uma casa construída atravessou esse portal — e cada comportamento que a tornou possível também atravessou.
+
+Isso funciona como um algoritmo:
+
+- **Objetivo** — o estado-alvo, o *return*. Ex.: ter a casa.
+- **Comportamentos** — as funções que rodam até lá. Ex.: investir, evitar gastos supérfluos, aumentar renda, estudar o mercado.
+- **Tempo e dinheiro** — os recursos que o programa consome para executar.
+
+Por isso o Semear é, em uma imagem, um **compilador de intenção**: recebe o objetivo declarado e o decompõe em comportamentos minúsculos, verificando a cada passo se o programa segue apontado para o `return` certo.
+
+---
+
+## 5. As duas pedras do método
+
+O **porquê** o modelo importa está na tríade. O **como** o produto muda a vida está em duas referências (detalhadas em `Semear - Design de Vida e Comportamento.md`):
+
+- **BJ Fogg — *Micro Hábitos* (pedra angular / o motor).** Não apostar na motivação (que oscila); projetar pela Ability (ação ridiculamente fácil); ancorar o hábito minúsculo num que já existe; celebrar logo após a ação, porque é a emoção que grava o hábito. É o motor que roda cada passo do comportamento.
+- **Bill Burnett — *Designing Your Life* (o front-end).** Define o objetivo e a direção: Workview/Lifeview, reframes de crenças travadas, Odyssey Plans, Good Time Journal. É a camada de identidade e desejo.
+
+**Burnett define o alvo, Fogg roda o loop.** A arquitetura interna (Burnett) não é a porta de entrada — é a profundidade desbloqueável depois que o hábito mínimo (Fogg) pegou.
+
+---
+
+## 6. As quatro caixas do dinheiro
 
 Todo real que sai cai em uma das quatro caixas:
 
@@ -66,46 +78,47 @@ Todo real que sai cai em uma das quatro caixas:
 3. **Investimento** — sai hoje para voltar maior depois (aporte, reserva, ações)
 4. **Atrito** — escoa sem virar nem manutenção, nem vida, nem retorno (juros, multas, conveniências, tarifas tolas)
 
----
-
-## 6. A inversão de valor
-
-A maioria dos apps pergunta: *"como você está usando seu tempo?"*
-
-O Semear pergunta: *"quanto do seu tempo está sendo de fato vivido?"*
-
-A diferença é existencial. O sistema **honra** o autocuidado, identifica o trabalho que gera valor versus o atrito do trabalho, e mostra a distância da vida desejada. O usuário não se sente cobrado — se sente respeitado.
+**Slogan-síntese:** *"O atrito é o cupim do tempo e do dinheiro."*
 
 ---
 
-## 7. A psicologia do consumista
+## 7. A psicologia de quem o produto serve
 
-Quem o produto serve tem três déficits sistemáticos:
+Três déficits sistemáticos:
 
 1. **Não enxerga o "para onde" do dinheiro** — sabe que entra X, sabe que sai X, mas o dinheiro vira névoa. **Categorização visível = consciência.**
-2. **Não conecta dinheiro a tempo de vida** — compra um relógio de R$ 4.000 sem perceber quantas horas de vida isso representa. **Tradução em horas em todo gasto.**
+2. **Não conecta dinheiro a tempo de vida** — compra um relógio de R$ 4.000 sem perceber quantas horas de vida isso representa. **Tradução em horas em todo gasto** (ativa o pensamento lento e deliberado numa compra que seria impulso).
 3. **Não vê o futuro** — o cérebro é míope para consequências de longo prazo. Parcelar parece indolor. **O painel precisa fazer o futuro doer um pouco.**
 
 ---
 
-## 8. Tom de voz do produto
+## 8. Princípios de design comportamental (regras duras)
+
+- **Fricção mínima na porta.** O onboarding é Fogg puro: uma âncora, um registro de um toque. Nada de Workview, Lifeview ou crenças-teto na primeira tela. Se registrar custar esforço, o dado não vem — e sem dado o espelho fica cego.
+- **Estrutura do registro = âncora + hábito minúsculo.** "Depois que eu [rotina existente], eu vou [ação minúscula]." O Semear se enxerta num momento que já existe; não pede um momento novo.
+- **O Semear só celebra o passo de vida do usuário, jamais o uso do próprio app.** Onde os apps extractivos celebram o engajamento deles, o Semear celebra o avanço da vida da pessoa. Mesmo mecanismo emocional, beneficiário invertido — é nisso que o uso é emancipatório.
+- **Celebração digna, não confete.** O reconhecimento é caloroso e imediato, mas nunca a gamificação dopaminérgica que o produto rejeita.
+
+---
+
+## 9. Tom de voz do produto
 
 - **Familial, não corporativo.** Como um irmão mais velho que cuida, não como um gerente que cobra.
 - **Honesto, com parceria.** Mostra a realidade dura sem grosseria. Sempre fecha com "estamos juntos nesse caminho."
-- **Sabedoria, não pressa.** Inspirado em Salomão. Sem ansiedade, sem urgência fabricada.
+- **Sabedoria, não pressa.** Sem ansiedade, sem urgência fabricada.
 - **Sem emojis decorativos. Sem bullet points em conversa.** Frases inteiras.
 - **Linguagem clássica, peso editorial.** DM Serif Display nos títulos, Inter no corpo.
 
 ---
 
-## 9. Estética visual
+## 10. Estética visual
 
 - **Paleta principal:**
   - Background: pêssego (`#fdeee4`)
   - Texto principal: marrom escuro (`#2d2620`)
   - Tom rosa terra (marca): `#d4807a`
   - Marrom suave (apoio): `#8b6f5c`
-  - Verde sálvia (autocuidado honrado): `#6fa572`
+  - Verde sálvia (passo de vida honrado): `#6fa572`
   - Vermelho terracota (atrito): `#a32d2d`
   - Verde escuro (positivo financeiro): `#2d7a4a`
 
@@ -121,7 +134,7 @@ Quem o produto serve tem três déficits sistemáticos:
 
 ---
 
-## 10. Estratégia de construção (3 anéis)
+## 11. Estratégia de construção (3 anéis)
 
 **Anel 1 — Na pele do criador (Rafael)** — todo conceito testado primeiro na vida real, sem mediação. **Status:** Apps Script + Sheets rodando.
 
@@ -131,16 +144,16 @@ Quem o produto serve tem três déficits sistemáticos:
 
 ---
 
-## 11. O que fica em aberto (roadmap conceitual)
+## 12. O que fica em aberto (roadmap conceitual)
 
-1. **Arquitetura de tempo e dinheiro** — os cálculos estão sendo revistos com rigor matemático-financeiro. Em construção com apoio do NotebookLM.
-2. **Medição do fator de Ato** — quanto da potência disponível é convertida em vida vivida. Comportamental.
-3. **Atrito dentro da vida desejada** — fase avançada. Trânsito para o lazer, fila no restaurante.
-4. **Atrito dentro do autocuidado** — fase avançada. Sono mal dormido, alimentação estressante.
+1. **Arquitetura de tempo e dinheiro** — os cálculos estão sendo revistos com rigor matemático-financeiro.
+2. **Medição do "fator de Ato"** — quanto da potência vira vida vivida. **Instrumentação resolvida pelo Good Time Journal de Burnett:** registrar energia e engajamento por atividade. Onde houve engajamento real, houve vida vivida.
+3. **Decomposição automática de objetivo em comportamentos** — o coração do "compilador de intenção". Como traduzir um objetivo declarado em hábitos minúsculos sugeridos.
+4. **Atrito dentro da vida desejada e do autocuidado** — fase avançada.
 
 ---
 
-## 12. O que NÃO é o Semear
+## 13. O que NÃO é o Semear
 
 - ❌ Não é um app de gastos
 - ❌ Não é uma planilha bonita
@@ -148,17 +161,17 @@ Quem o produto serve tem três déficits sistemáticos:
 - ❌ Não é um app de produtividade que otimiza tempo
 - ❌ Não é mais um agregador de contas bancárias
 
-**O Semear é um espelho.** Um sistema que mostra com clareza matemática e estética a distância entre a vida que o usuário gera e a vida que ele diz querer viver — e o ajuda a navegar essa distância com sabedoria.
+**O Semear é um espelho e um compilador.** Mostra, com clareza e sem julgamento, a distância entre a vida que o usuário gera e a vida que ele diz querer viver — e a atravessa transformando intenção em comportamento, passo mínimo por passo mínimo.
 
 ---
 
-## 13. Referências cruzadas
+## 14. Referências cruzadas
 
-- **Fundação matemática e glossário:** `Semear - Fundacao Matematica.md` ← equações canônicas e siglas
-- **Documento conceitual completo:** `Semear - Documento Conceitual.docx`
+- **Design de vida e comportamento (método):** `Semear - Design de Vida e Comportamento.md` ← Fogg, Burnett, o compilador de intenção
+- **Fundação matemática e glossário:** `Semear - Fundacao Matematica.md`
 - **Prompt inicial Claude Code:** `Semear - Prompt Inicial Claude Code.md`
 - **Documentação técnica do Apps Script (legado):** `Semear - Documentacao Tecnica AppsScript.md`
-- **Painel visual de referência:** `Semear - Painel Visual.html`
+- **Protótipo de UI:** `Semear - Prototipo UI.html`
 
 ---
 
