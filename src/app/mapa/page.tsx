@@ -3,15 +3,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { MapaVida } from '@/components/mapa/MapaVida'
+import { BarraSentimento } from '@/components/mapa/BarraSentimento'
 import { Button } from '@/components/ui/button'
 import {
   FACETAS,
   SUGESTOES,
-  SENTIMENTOS,
   facetaPorId,
   pontuacaoDe,
-  nivelDaNota,
-  rotuloDoNivel,
   carregarMapa,
   salvarMapa,
   carregarEconomia,
@@ -693,46 +691,6 @@ function PainelFaceta({
         </button>
       </div>
     </section>
-  )
-}
-
-function BarraSentimento({
-  cor,
-  nota,
-  onMudar,
-}: {
-  cor: string
-  nota: number
-  onMudar: (n: number) => void
-}) {
-  const nivel = nivelDaNota(nota)
-  return (
-    <div className="space-y-3">
-      <div className="flex gap-1.5">
-        {SENTIMENTOS.map((s) => {
-          const aceso = nivel > 0 && s.nivel <= nivel
-          return (
-            <button
-              key={s.nivel}
-              onClick={() => onMudar(s.nota)}
-              aria-label={s.rotulo}
-              aria-pressed={s.nivel === nivel}
-              className="flex-1 h-5 rounded-full transition-colors duration-200"
-              style={{
-                background: aceso ? cor : '#f5d9c8',
-                opacity: aceso ? 0.55 + (s.nivel / 5) * 0.45 : 1,
-              }}
-            />
-          )
-        })}
-      </div>
-      <p
-        className="font-serif text-xl"
-        style={{ color: nivel > 0 ? cor : '#8b6f5c' }}
-      >
-        {nivel > 0 ? rotuloDoNivel(nivel) : 'Toque para avaliar'}
-      </p>
-    </div>
   )
 }
 
