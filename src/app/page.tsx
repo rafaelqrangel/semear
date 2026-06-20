@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 
-// Por enquanto, redireciona direto para o onboarding.
-// Quando tivermos auth, aqui vai verificar se o usuário
-// já tem conta e redirecionar para /dashboard ou /onboarding.
+// O mapa da vida é a porta de entrada do Semear.
+// Quando tivermos auth, aqui vai verificar se o usuário já fez o
+// diagnóstico e mandá-lo para /mapa ou /onboarding.
 export default function Home() {
-  redirect('/onboarding')
+  redirect('/mapa')
 }
