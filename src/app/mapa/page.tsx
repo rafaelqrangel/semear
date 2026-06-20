@@ -5,14 +5,16 @@ import Link from 'next/link'
 import { MapaVida } from '@/components/mapa/MapaVida'
 import { Button } from '@/components/ui/button'
 import {
-  ESFERAS,
+  FACETAS,
   SUGESTOES,
-  esferaPorId,
+  facetaPorId,
+  pontuacaoDe,
   carregarMapa,
   salvarMapa,
   carregarEconomia,
   novoId,
-  type EsferaId,
+  type FacetaId,
+  type MapaState,
   type Objetivo,
   type Comportamento,
   type Selecao,
@@ -22,21 +24,28 @@ import { formatarReais, formatarHoras } from '@/lib/calculations'
 
 export default function MapaPage() {
   const [objetivos, setObjetivos] = useState<Objetivo[]>([])
+  const [pontuacoes, setPontuacoes] = useState<MapaState['pontuacoes']>({})
   const [economia, setEconomia] = useState<EconomiaSnapshot | null>(null)
   const [selecao, setSelecao] = useState<Selecao>('intencao')
   const [pronto, setPronto] = useState(false)
 
   // Carrega do armazenamento local na montagem.
   useEffect(() => {
-    setObjetivos(carregarMapa().objetivos)
+    const m = carregarMapa()
+    setObjetivos(m.objetivos)
+    setPontuacoes(m.pontuacoes)
     setEconomia(carregarEconomia())
     setPronto(true)
   }, [])
 
   // Persiste a cada mudança (após a carga inicial).
   useEffect(() => {
-    if (pronto) salvarMapa({ objetivos })
-  }, [objetivos, pronto])
+    if (pronto) salvarMapa({ objetivos, pontuacoes })
+  }, [objetivos, pontuacoes, pronto])
+
+  function definirPontuacao(id: FacetaId, nota: number) {
+    setPontuacoes((prev) => ({ ...prev, [id]: nota }))
+  }
 
   return (
     <div className="min-h-screen bg-[#fdeee4] flex flex-col">
@@ -55,7 +64,7 @@ export default function MapaPage() {
       <main className="flex-1 px-6 pb-12 max-w-lg mx-auto w-full">
         <div className="text-center pt-2 pb-1">
           <p className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">
-            O mapa da sua vida
+            A roda da sua vida
           </p>
           <h1 className="font-serif text-2xl text-[#2d2620] leading-tight mt-1">
             Você no centro.<br />
@@ -63,15 +72,16 @@ export default function MapaPage() {
           </h1>
         </div>
 
-        <div className="mt-2">
+        <div className="mt-4">
           <MapaVida
+            pontuacoes={pontuacoes}
             objetivos={objetivos}
             selecao={selecao}
             onSelecionar={setSelecao}
           />
         </div>
 
-        <div className="mt-2 animate-in-up" key={selecao}>
+        <div className="mt-6 animate-in-up" key={selecao}>
           {selecao === 'intencao' ? (
             <PainelIntencao
               objetivos={objetivos}
@@ -96,10 +106,12 @@ export default function MapaPage() {
               }
             />
           ) : (
-            <PainelEsfera
-              esferaId={selecao}
+            <PainelFaceta
+              facetaId={selecao}
+              nota={pontuacaoDe(selecao, pontuacoes)}
               objetivos={objetivos}
               economia={economia}
+              onPontuar={(n) => definirPontuacao(selecao, n)}
               onIrParaCentro={() => setSelecao('intencao')}
             />
           )}
@@ -132,7 +144,7 @@ function PainelIntencao({
     <section className="space-y-4">
       <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5">
         <p className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">
-          O centro
+          O eixo
         </p>
         <h2 className="font-serif text-xl text-[#2d2620] mt-1">
           A intenção é o vértice.
@@ -208,15 +220,15 @@ function CartaoObjetivo({
             {objetivo.titulo}
           </h3>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
-            {objetivo.esferas.map((id) => {
-              const e = esferaPorId(id)
+            {objetivo.facetas.map((id) => {
+              const f = facetaPorId(id)
               return (
                 <span
                   key={id}
                   className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: e.cor + '22', color: e.cor }}
+                  style={{ background: f.cor + '22', color: f.cor }}
                 >
-                  {e.nome}
+                  {f.nome}
                 </span>
               )
             })}
@@ -318,7 +330,7 @@ function FormularioObjetivo({
   onCancelar: () => void
 }) {
   const [titulo, setTitulo] = useState('')
-  const [esferas, setEsferas] = useState<EsferaId[]>([])
+  const [facetas, setFacetas] = useState<FacetaId[]>([])
   const [horas, setHoras] = useState('')
   const [dinheiro, setDinheiro] = useState('')
   const [comportamentos, setComportamentos] = useState<Comportamento[]>([])
@@ -326,17 +338,17 @@ function FormularioObjetivo({
 
   const sugestoes = useMemo(() => {
     const conjunto = new Set<string>()
-    esferas.forEach((id) => SUGESTOES[id].forEach((s) => conjunto.add(s)))
+    facetas.forEach((id) => SUGESTOES[id].forEach((s) => conjunto.add(s)))
     const jaUsados = new Set(comportamentos.map((c) => c.texto))
     return Array.from(conjunto)
       .filter((s) => !jaUsados.has(s))
       .slice(0, 3)
-  }, [esferas, comportamentos])
+  }, [facetas, comportamentos])
 
-  const podeSalvar = titulo.trim().length > 0 && esferas.length > 0
+  const podeSalvar = titulo.trim().length > 0 && facetas.length > 0
 
-  function toggleEsfera(id: EsferaId) {
-    setEsferas((prev) =>
+  function toggleFaceta(id: FacetaId) {
+    setFacetas((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     )
   }
@@ -356,7 +368,7 @@ function FormularioObjetivo({
     onSalvar({
       id: novoId(),
       titulo: titulo.trim(),
-      esferas,
+      facetas,
       horasSemana: parseFloat(horas) || 0,
       dinheiroMes: parseFloat(dinheiro) || 0,
       comportamentos,
@@ -383,26 +395,26 @@ function FormularioObjetivo({
         />
       </div>
 
-      {/* Esferas */}
+      {/* Facetas */}
       <div className="space-y-1.5">
         <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-          Que esferas da vida ele toca?
+          Que facetas da vida ele toca?
         </label>
         <div className="flex flex-wrap gap-2">
-          {ESFERAS.map((e) => {
-            const ativa = esferas.includes(e.id)
+          {FACETAS.map((f) => {
+            const ativa = facetas.includes(f.id)
             return (
               <button
-                key={e.id}
-                onClick={() => toggleEsfera(e.id)}
+                key={f.id}
+                onClick={() => toggleFaceta(f.id)}
                 className="text-sm font-semibold px-3 py-1.5 rounded-full border transition-colors"
                 style={{
-                  background: ativa ? e.cor : 'transparent',
-                  color: ativa ? '#fff' : e.cor,
-                  borderColor: e.cor,
+                  background: ativa ? f.cor : 'transparent',
+                  color: ativa ? '#fff' : f.cor,
+                  borderColor: f.cor,
                 }}
               >
-                {e.nome}
+                {f.nome}
               </button>
             )
           })}
@@ -535,45 +547,85 @@ function FormularioObjetivo({
 }
 
 // ============================================================
-// Painel de uma esfera (drill-down)
+// Painel de uma faceta (drill-down)
 // ============================================================
 
-function PainelEsfera({
-  esferaId,
+function PainelFaceta({
+  facetaId,
+  nota,
   objetivos,
   economia,
+  onPontuar,
   onIrParaCentro,
 }: {
-  esferaId: EsferaId
+  facetaId: FacetaId
+  nota: number
   objetivos: Objetivo[]
   economia: EconomiaSnapshot | null
+  onPontuar: (n: number) => void
   onIrParaCentro: () => void
 }) {
-  const esfera = esferaPorId(esferaId)
-  const relacionados = objetivos.filter((o) => o.esferas.includes(esferaId))
+  const faceta = facetaPorId(facetaId)
+  const relacionados = objetivos.filter((o) => o.facetas.includes(facetaId))
 
   return (
     <section className="space-y-4">
       <div
         className="rounded-2xl p-5 border"
-        style={{ background: esfera.cor + '14', borderColor: esfera.cor + '40' }}
+        style={{ background: faceta.cor + '14', borderColor: faceta.cor + '40' }}
       >
         <p
           className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: esfera.cor }}
+          style={{ color: faceta.cor }}
         >
-          Esfera
+          Faceta
         </p>
         <h2 className="font-serif text-2xl text-[#2d2620] mt-1">
-          {esfera.nome}
+          {faceta.nomeCompleto}
         </h2>
         <p className="text-[#8b6f5c] text-sm leading-relaxed mt-1">
-          {esfera.descricao}
+          {faceta.descricao}
         </p>
       </div>
 
-      {/* Prosperar carrega a economia doméstica (a frente matemática) */}
-      {esferaId === 'prosperar' && (
+      {/* Pontuação 0–10 — o coração da Roda da Vida */}
+      <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
+            Como está hoje?
+          </p>
+          <span className="font-serif text-lg" style={{ color: faceta.cor }}>
+            {nota}/10
+          </span>
+        </div>
+        <div className="flex gap-1">
+          {Array.from({ length: 11 }, (_, n) => {
+            const ativo = n <= nota && nota > 0
+            return (
+              <button
+                key={n}
+                onClick={() => onPontuar(n)}
+                aria-label={`Nota ${n}`}
+                className="flex-1 h-9 rounded-md text-xs font-semibold transition-colors"
+                style={{
+                  background: ativo ? faceta.cor : '#fdeee4',
+                  color: ativo ? '#fff' : '#8b6f5c',
+                  border: `1px solid ${ativo ? faceta.cor : '#e8d8ce'}`,
+                }}
+              >
+                {n}
+              </button>
+            )
+          })}
+        </div>
+        <p className="text-[#8b6f5c] text-xs">
+          Sem julgamento — só a verdade de onde esta parte da sua vida está
+          agora.
+        </p>
+      </div>
+
+      {/* Finanças carrega a economia doméstica (a frente matemática) */}
+      {facetaId === 'financas' && (
         <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-3">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
             Sua economia doméstica
@@ -612,7 +664,7 @@ function PainelEsfera({
             <>
               <p className="text-[#8b6f5c] text-sm leading-relaxed">
                 Você ainda não fez seu diagnóstico. É ele que dá lastro a esta
-                esfera — o valor da sua hora, seu saldo, seu tempo livre.
+                faceta — o valor da sua hora, seu saldo, seu tempo livre.
               </p>
               <Link href="/onboarding">
                 <Button className="w-full h-12 font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl">
@@ -624,10 +676,10 @@ function PainelEsfera({
         </div>
       )}
 
-      {/* Intenções que tocam esta esfera */}
+      {/* Intenções que tocam esta faceta */}
       <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-3">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-          Intenções nesta esfera
+          Intenções nesta faceta
         </p>
         {relacionados.length > 0 ? (
           <ul className="space-y-2">

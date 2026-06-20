@@ -1,64 +1,97 @@
 // ============================================================
-// Semear — Mapa da Vida
-// O modelo das esferas, da intenção no centro, e do compilador
-// de intenção (objetivo → comportamentos minúsculos + recursos).
+// Semear — Roda da Vida
+// As facetas concretas da vida (modelo dos profissionais de
+// design/organização de vida), a Intenção no eixo central, e o
+// compilador de intenção (objetivo → comportamentos + recursos).
 // ============================================================
 
-export type EsferaId = 'ser' | 'conviver' | 'prosperar'
+export type FacetaId =
+  | 'saude'
+  | 'carreira'
+  | 'financas'
+  | 'amoroso'
+  | 'familia'
+  | 'amizades'
+  | 'desenvolvimento'
+  | 'lazer'
 
-export interface EsferaConfig {
-  id: EsferaId
-  nome: string
+export interface FacetaConfig {
+  id: FacetaId
+  nome: string // rótulo curto na roda
+  nomeCompleto: string
   descricao: string
   cor: string
-  // posição do centro do círculo no viewBox 400x440
-  cx: number
-  cy: number
-  // posição do rótulo, no lóbulo externo da esfera
-  lx: number
-  ly: number
 }
 
-export const RAIO_ESFERA = 120
-
 /**
- * As três esferas da vida. Elas se cruzam; o centro onde todas se
- * sobrepõem é a Intenção — o cerne, o ponto de onde o usuário parte.
+ * As oito facetas da Roda da Vida, na ordem em que aparecem ao
+ * redor do eixo (sentido horário, a partir do topo). O campo das
+ * relações é quebrado em três facetas distintas — amoroso, família
+ * e amizades — como fazem os profissionais.
  */
-export const ESFERAS: EsferaConfig[] = [
+export const FACETAS: FacetaConfig[] = [
   {
-    id: 'ser',
-    nome: 'Ser',
-    descricao: 'Identidade, saúde, autocuidado, propósito — quem você é.',
-    cor: '#d4807a', // rose
-    cx: 200, cy: 150,
-    lx: 200, ly: 56,
-  },
-  {
-    id: 'conviver',
-    nome: 'Conviver',
-    descricao: 'Relações, família, amor — com quem você vive.',
+    id: 'saude',
+    nome: 'Saúde',
+    nomeCompleto: 'Saúde e energia',
+    descricao: 'Corpo, sono, alimentação, disposição — sua base física.',
     cor: '#6fa572', // sage
-    cx: 138, cy: 258,
-    lx: 78, ly: 348,
   },
   {
-    id: 'prosperar',
-    nome: 'Prosperar',
-    descricao: 'Trabalho, dinheiro, tempo — o que você constrói.',
+    id: 'carreira',
+    nome: 'Carreira',
+    nomeCompleto: 'Carreira e propósito',
+    descricao: 'Trabalho, vocação, sentido do que você faz.',
     cor: '#8b6f5c', // mocha
-    cx: 262, cy: 258,
-    lx: 322, ly: 348,
+  },
+  {
+    id: 'financas',
+    nome: 'Finanças',
+    nomeCompleto: 'Finanças',
+    descricao: 'Dinheiro, segurança, independência — sua economia doméstica.',
+    cor: '#2d7a4a', // green-semear
+  },
+  {
+    id: 'amoroso',
+    nome: 'Amor',
+    nomeCompleto: 'Relacionamento amoroso',
+    descricao: 'Parceria, intimidade, vida a dois.',
+    cor: '#d4807a', // rose
+  },
+  {
+    id: 'familia',
+    nome: 'Família',
+    nomeCompleto: 'Família',
+    descricao: 'Filhos, pais, parentes — o núcleo de casa.',
+    cor: '#c2695f', // terracota suave
+  },
+  {
+    id: 'amizades',
+    nome: 'Amizades',
+    nomeCompleto: 'Amizades e vida social',
+    descricao: 'A rede fora de casa: amigos e convívio.',
+    cor: '#c79a5b', // âmbar/ocre
+  },
+  {
+    id: 'desenvolvimento',
+    nome: 'Crescimento',
+    nomeCompleto: 'Desenvolvimento pessoal',
+    descricao: 'Estudo, espiritualidade, evolução interna.',
+    cor: '#7d8a5a', // oliva
+  },
+  {
+    id: 'lazer',
+    nome: 'Lazer',
+    nomeCompleto: 'Lazer e diversão',
+    descricao: 'Descanso, prazer, recreação — recarregar.',
+    cor: '#b07a9a', // malva
   },
 ]
 
-// Centroide dos três círculos — onde mora a Intenção.
-export const CENTRO = { cx: 200, cy: 222, r: 48 }
+export type Selecao = 'intencao' | FacetaId
 
-export type Selecao = 'intencao' | EsferaId
-
-export function esferaPorId(id: EsferaId): EsferaConfig {
-  return ESFERAS.find((e) => e.id === id)!
+export function facetaPorId(id: FacetaId): FacetaConfig {
+  return FACETAS.find((f) => f.id === id)!
 }
 
 // ------------------------------------------------------------
@@ -74,7 +107,7 @@ export interface Comportamento {
 export interface Objetivo {
   id: string
   titulo: string
-  esferas: EsferaId[] // quais esferas a intenção toca
+  facetas: FacetaId[] // quais facetas a intenção toca
   horasSemana: number // recurso: tempo
   dinheiroMes: number // recurso: dinheiro
   comportamentos: Comportamento[]
@@ -83,12 +116,14 @@ export interface Objetivo {
 
 export interface MapaState {
   objetivos: Objetivo[]
+  // nota de 0 a 10 que a pessoa dá a cada faceta (coração da Roda da Vida)
+  pontuacoes: Partial<Record<FacetaId, number>>
 }
 
 /**
  * Snapshot da economia doméstica, gravado ao fim do onboarding.
- * É a ponte entre as duas frentes: a frente matemática alimenta
- * a esfera Prosperar com números reais.
+ * É a ponte entre as duas frentes: a frente matemática alimenta a
+ * faceta Finanças com números reais.
  */
 export interface EconomiaSnapshot {
   vh: number
@@ -103,42 +138,51 @@ export interface EconomiaSnapshot {
   atualizadoEm: string
 }
 
+export function pontuacaoDe(
+  id: FacetaId,
+  pontuacoes: MapaState['pontuacoes'],
+): number {
+  return pontuacoes[id] ?? 0
+}
+
 // ------------------------------------------------------------
 // Sugestões de comportamento minúsculo (estrutura de Fogg:
 // "Depois que eu [âncora], eu vou [ação ridiculamente fácil]").
 // ------------------------------------------------------------
 
-export const SUGESTOES: Record<EsferaId, string[]> = {
-  ser: [
+export const SUGESTOES: Record<FacetaId, string[]> = {
+  saude: [
     'Depois que eu acordar, eu vou beber um copo d’água.',
-    'Depois que eu escovar os dentes, eu vou respirar fundo três vezes.',
+    'Depois que eu escovar os dentes, eu vou me alongar por um minuto.',
   ],
-  conviver: [
-    'Depois que eu jantar, eu vou mandar uma mensagem para alguém que amo.',
-    'Depois que eu chegar em casa, eu vou perguntar como foi o dia de alguém.',
+  carreira: [
+    'Depois que eu abrir o computador, eu vou anotar a tarefa mais importante do dia.',
+    'Depois do almoço, eu vou ler uma página sobre a minha área.',
   ],
-  prosperar: [
+  financas: [
     'Depois que eu receber, eu vou separar 1% para investir.',
     'Depois que eu pagar uma conta, eu vou anotar em qual caixa ela caiu.',
   ],
-}
-
-// ------------------------------------------------------------
-// Saúde da esfera — intensidade visual de preenchimento (0..1).
-// Presença de objetivos acende a esfera; o progresso dos
-// comportamentos a torna mais viva.
-// ------------------------------------------------------------
-
-export function saudeEsfera(id: EsferaId, objetivos: Objetivo[]): number {
-  const rel = objetivos.filter((o) => o.esferas.includes(id))
-  if (rel.length === 0) return 0
-  const total = rel.reduce((a, o) => a + o.comportamentos.length, 0)
-  const feitos = rel.reduce(
-    (a, o) => a + o.comportamentos.filter((c) => c.feito).length,
-    0,
-  )
-  const progresso = total > 0 ? feitos / total : 0
-  return Math.min(1, 0.4 + progresso * 0.6)
+  amoroso: [
+    'Depois que eu deitar, eu vou agradecer uma coisa ao meu par.',
+    'Depois do jantar, eu vou perguntar como foi o dia dele(a).',
+  ],
+  familia: [
+    'Depois que eu acordar, eu vou abraçar quem mora comigo.',
+    'Depois do domingo, eu vou ligar para um familiar.',
+  ],
+  amizades: [
+    'Depois que eu tomar café, eu vou mandar uma mensagem para um amigo.',
+    'Depois da semana, eu vou marcar um encontro com alguém.',
+  ],
+  desenvolvimento: [
+    'Depois que eu sentar para trabalhar, eu vou ler uma página.',
+    'Depois do café, eu vou escrever três linhas no diário.',
+  ],
+  lazer: [
+    'Depois do jantar, eu vou fazer algo que gosto por cinco minutos.',
+    'Depois do trabalho, eu vou caminhar dez minutos.',
+  ],
 }
 
 // ------------------------------------------------------------
@@ -148,15 +192,20 @@ export function saudeEsfera(id: EsferaId, objetivos: Objetivo[]): number {
 const CHAVE_MAPA = 'semear:mapa'
 const CHAVE_ECONOMIA = 'semear:economia'
 
+const ESTADO_VAZIO: MapaState = { objetivos: [], pontuacoes: {} }
+
 export function carregarMapa(): MapaState {
-  if (typeof window === 'undefined') return { objetivos: [] }
+  if (typeof window === 'undefined') return ESTADO_VAZIO
   try {
     const raw = window.localStorage.getItem(CHAVE_MAPA)
-    if (!raw) return { objetivos: [] }
-    const parsed = JSON.parse(raw) as MapaState
-    return { objetivos: parsed.objetivos ?? [] }
+    if (!raw) return ESTADO_VAZIO
+    const parsed = JSON.parse(raw) as Partial<MapaState>
+    return {
+      objetivos: parsed.objetivos ?? [],
+      pontuacoes: parsed.pontuacoes ?? {},
+    }
   } catch {
-    return { objetivos: [] }
+    return ESTADO_VAZIO
   }
 }
 
