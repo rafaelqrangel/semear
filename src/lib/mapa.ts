@@ -146,6 +146,36 @@ export function pontuacaoDe(
 }
 
 // ------------------------------------------------------------
+// Barra de sentimento — a pessoa avalia cada faceta por sensação,
+// não por número. Internamente vira uma nota (0..10) para preencher
+// a roda, mas o usuário só vê a palavra.
+// ------------------------------------------------------------
+
+export interface Sentimento {
+  nivel: number // 1..5
+  nota: number // valor que preenche a roda
+  rotulo: string
+}
+
+export const SENTIMENTOS: Sentimento[] = [
+  { nivel: 1, nota: 2, rotulo: 'Precisa de cuidado' },
+  { nivel: 2, nota: 4, rotulo: 'Frágil' },
+  { nivel: 3, nota: 6, rotulo: 'Mais ou menos' },
+  { nivel: 4, nota: 8, rotulo: 'Bem' },
+  { nivel: 5, nota: 10, rotulo: 'Florescendo' },
+]
+
+/** Nível (1..5) correspondente a uma nota; 0 = ainda não avaliado. */
+export function nivelDaNota(nota: number): number {
+  if (nota <= 0) return 0
+  return Math.min(5, Math.max(1, Math.ceil(nota / 2)))
+}
+
+export function rotuloDoNivel(nivel: number): string {
+  return SENTIMENTOS.find((s) => s.nivel === nivel)?.rotulo ?? ''
+}
+
+// ------------------------------------------------------------
 // Sugestões de comportamento minúsculo (estrutura de Fogg:
 // "Depois que eu [âncora], eu vou [ação ridiculamente fácil]").
 // ------------------------------------------------------------

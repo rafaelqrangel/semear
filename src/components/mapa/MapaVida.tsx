@@ -149,7 +149,6 @@ export function MapaVida({ pontuacoes, objetivos, selecao, onSelecionar }: Props
         const [lx, ly] = polar(LABEL_R, am)
         const c = Math.cos((am * Math.PI) / 180)
         const anchor = c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle'
-        const nota = pontuacaoDe(f.id, pontuacoes)
         return (
           <g
             key={`label-${f.id}`}
@@ -166,17 +165,6 @@ export function MapaVida({ pontuacoes, objetivos, selecao, onSelecionar }: Props
             >
               {f.nome}
             </text>
-            {nota > 0 && (
-              <text
-                x={lx}
-                y={ly + 13}
-                textAnchor={anchor}
-                dominantBaseline="middle"
-                style={{ fontSize: 9.5, fill: '#8b6f5c', fontWeight: 600 }}
-              >
-                {nota}/10
-              </text>
-            )}
           </g>
         )
       })}

@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button'
 import {
   FACETAS,
   SUGESTOES,
+  SENTIMENTOS,
   facetaPorId,
   pontuacaoDe,
+  nivelDaNota,
+  rotuloDoNivel,
   carregarMapa,
   salvarMapa,
   carregarEconomia,
@@ -588,39 +591,14 @@ function PainelFaceta({
         </p>
       </div>
 
-      {/* Pontuação 0–10 — o coração da Roda da Vida */}
-      <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-            Como está hoje?
-          </p>
-          <span className="font-serif text-lg" style={{ color: faceta.cor }}>
-            {nota}/10
-          </span>
-        </div>
-        <div className="flex gap-1">
-          {Array.from({ length: 11 }, (_, n) => {
-            const ativo = n <= nota && nota > 0
-            return (
-              <button
-                key={n}
-                onClick={() => onPontuar(n)}
-                aria-label={`Nota ${n}`}
-                className="flex-1 h-9 rounded-md text-xs font-semibold transition-colors"
-                style={{
-                  background: ativo ? faceta.cor : '#fdeee4',
-                  color: ativo ? '#fff' : '#8b6f5c',
-                  border: `1px solid ${ativo ? faceta.cor : '#e8d8ce'}`,
-                }}
-              >
-                {n}
-              </button>
-            )
-          })}
-        </div>
+      {/* Barra de sentimento — avaliação por sensação, não por número */}
+      <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-4">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
+          Como você sente esta parte da sua vida?
+        </p>
+        <BarraSentimento cor={faceta.cor} nota={nota} onMudar={onPontuar} />
         <p className="text-[#8b6f5c] text-xs">
-          Sem julgamento — só a verdade de onde esta parte da sua vida está
-          agora.
+          Sem julgamento, sem números — só a sensação de onde isso está agora.
         </p>
       </div>
 
@@ -715,6 +693,46 @@ function PainelFaceta({
         </button>
       </div>
     </section>
+  )
+}
+
+function BarraSentimento({
+  cor,
+  nota,
+  onMudar,
+}: {
+  cor: string
+  nota: number
+  onMudar: (n: number) => void
+}) {
+  const nivel = nivelDaNota(nota)
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-1.5">
+        {SENTIMENTOS.map((s) => {
+          const aceso = nivel > 0 && s.nivel <= nivel
+          return (
+            <button
+              key={s.nivel}
+              onClick={() => onMudar(s.nota)}
+              aria-label={s.rotulo}
+              aria-pressed={s.nivel === nivel}
+              className="flex-1 h-5 rounded-full transition-colors duration-200"
+              style={{
+                background: aceso ? cor : '#f5d9c8',
+                opacity: aceso ? 0.55 + (s.nivel / 5) * 0.45 : 1,
+              }}
+            />
+          )
+        })}
+      </div>
+      <p
+        className="font-serif text-xl"
+        style={{ color: nivel > 0 ? cor : '#8b6f5c' }}
+      >
+        {nivel > 0 ? rotuloDoNivel(nivel) : 'Toque para avaliar'}
+      </p>
+    </div>
   )
 }
 
