@@ -14,7 +14,9 @@ import {
   zonaFinanceira,
 } from '@/lib/calculations'
 import { Button } from '@/components/ui/button'
+import { salvarEconomia } from '@/lib/mapa'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 interface Props {
   dados: OnboardingData
@@ -33,6 +35,23 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
   const nome = dados.apelido || dados.nome || 'você'
   const zona = zonaFinanceira(ind.saldo, ind.gif)
   const config = ZONA_CONFIG[zona]
+
+  // Ponte entre as duas frentes: grava a economia doméstica para
+  // alimentar a esfera Prosperar no mapa da vida.
+  useEffect(() => {
+    salvarEconomia({
+      vh: ind.vh,
+      saldo: ind.saldo,
+      gif: ind.gif,
+      rl: ind.rl,
+      tr: ind.tr,
+      m: ind.m,
+      v: ind.v,
+      d: ind.d,
+      i: ind.i,
+      atualizadoEm: new Date().toISOString(),
+    })
+  }, [ind.vh, ind.saldo, ind.gif, ind.rl, ind.tr, ind.m, ind.v, ind.d, ind.i])
 
   const indicadoresCards = [
     {
@@ -158,9 +177,9 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
 
       {/* CTAs */}
       <div className="space-y-3 pt-2">
-        <Link href="/dashboard">
+        <Link href="/mapa">
           <Button className="w-full h-14 text-base font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl">
-            Entrar no Semear →
+            Ir para o mapa da minha vida →
           </Button>
         </Link>
         <Button

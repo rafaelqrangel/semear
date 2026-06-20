@@ -81,3 +81,32 @@
 .animate-in-up {
   animation: fadeSlideUp 0.35s ease-out forwards;
 }
+
+/* Pulso do núcleo do mapa — o "big bang" da intenção */
+@keyframes mapaPulso {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.mapa-pulso {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mapaPulso 3.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-pulso {
+    animation: none;
+    opacity: 0.25;
+  }
+}
