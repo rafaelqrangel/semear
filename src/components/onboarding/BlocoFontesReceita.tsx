@@ -227,6 +227,7 @@ function ValorHoraDetalhe({
 }) {
   const porHora = (valor: number, horas: number) =>
     horas > 0 ? formatarReais(valor / (horas * SEMANAS_POR_MES)) : '—'
+  const horasMes = (horas: number) => Math.round(horas * SEMANAS_POR_MES)
 
   const temDeslocamento = horasTotal > horasTrabalho
 
@@ -234,7 +235,7 @@ function ValorHoraDetalhe({
     <div className="space-y-2 pt-1">
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-          Por hora trabalhada ({horasTrabalho}h/sem)
+          Por hora trabalhada ({horasTrabalho}h/sem ≈ {horasMes(horasTrabalho)}h/mês)
         </p>
         <p className="text-sm text-[#8b6f5c]">
           Bruto{' '}
@@ -250,7 +251,7 @@ function ValorHoraDetalhe({
       {temDeslocamento && (
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-            Com deslocamento ({horasTotal}h/sem)
+            Com deslocamento ({horasTotal}h/sem ≈ {horasMes(horasTotal)}h/mês)
           </p>
           <p className="text-sm text-[#8b6f5c]">
             Bruto{' '}
@@ -504,6 +505,21 @@ function FormularioFonte({
         O deslocamento também é tempo que o trabalho consome — ele entra na
         conta da sua hora real.
       </p>
+      {trabNum + deslNum > 0 && (
+        <p className="text-xs text-[#8b6f5c] -mt-1 bg-white border border-[#e8d8ce] rounded-lg px-3 py-2">
+          No mês isso dá{' '}
+          <strong className="text-[#2d2620]">
+            ≈ {Math.round(trabNum * SEMANAS_POR_MES)}h de trabalho
+          </strong>
+          {deslNum > 0 && (
+            <>
+              {' '}
+              + {Math.round(deslNum * SEMANAS_POR_MES)}h de deslocamento
+            </>
+          )}{' '}
+          (semana × 4,33). É por esse total que o valor da hora é dividido.
+        </p>
+      )}
 
       {/* Custos itemizados */}
       <div className="space-y-2">
