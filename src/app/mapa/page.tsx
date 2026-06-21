@@ -88,20 +88,6 @@ export default function MapaPage() {
               objetivos={objetivos}
               economia={economia}
               onCriar={(o) => setObjetivos((prev) => [...prev, o])}
-              onAlternar={(objId, compId) =>
-                setObjetivos((prev) =>
-                  prev.map((o) =>
-                    o.id !== objId
-                      ? o
-                      : {
-                          ...o,
-                          comportamentos: o.comportamentos.map((c) =>
-                            c.id === compId ? { ...c, feito: !c.feito } : c,
-                          ),
-                        },
-                  ),
-                )
-              }
               onRemover={(objId) =>
                 setObjetivos((prev) => prev.filter((o) => o.id !== objId))
               }
@@ -130,13 +116,11 @@ function PainelIntencao({
   objetivos,
   economia,
   onCriar,
-  onAlternar,
   onRemover,
 }: {
   objetivos: Objetivo[]
   economia: EconomiaSnapshot | null
   onCriar: (o: Objetivo) => void
-  onAlternar: (objId: string, compId: string) => void
   onRemover: (objId: string) => void
 }) {
   const [criando, setCriando] = useState(false)
@@ -164,7 +148,6 @@ function PainelIntencao({
               key={o.id}
               objetivo={o}
               economia={economia}
-              onAlternar={onAlternar}
               onRemover={onRemover}
             />
           ))}
@@ -197,17 +180,12 @@ function PainelIntencao({
 function CartaoObjetivo({
   objetivo,
   economia,
-  onAlternar,
   onRemover,
 }: {
   objetivo: Objetivo
   economia: EconomiaSnapshot | null
-  onAlternar: (objId: string, compId: string) => void
   onRemover: (objId: string) => void
 }) {
-  const total = objetivo.comportamentos.length
-  const feitos = objetivo.comportamentos.filter((c) => c.feito).length
-  const progresso = total > 0 ? Math.round((feitos / total) * 100) : 0
   const custoHoras =
     economia && economia.vh > 0
       ? objetivo.horasSemana * economia.vh * 4.33
@@ -269,49 +247,22 @@ function CartaoObjetivo({
         </div>
       )}
 
-      {/* Comportamentos minúsculos */}
-      {total > 0 && (
+      {/* Hábitos da intenção — lista expositiva (a estrutura de hábitos) */}
+      {objetivo.comportamentos.length > 0 && (
         <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-              Comportamentos
-            </span>
-            <span className="text-[11px] font-semibold text-[#6fa572]">
-              {feitos}/{total} · {progresso}%
-            </span>
-          </div>
-          <div className="h-1 bg-[#f5d9c8] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#6fa572] rounded-full transition-all duration-500"
-              style={{ width: `${progresso}%` }}
-            />
-          </div>
-          <ul className="space-y-1.5 pt-1">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
+            Hábitos desta intenção
+          </span>
+          <ul className="space-y-2 pt-0.5">
             {objetivo.comportamentos.map((c) => (
-              <li key={c.id}>
-                <button
-                  onClick={() => onAlternar(objetivo.id, c.id)}
-                  className="flex items-start gap-2 text-left w-full group"
-                >
-                  <span
-                    className={`mt-0.5 shrink-0 w-4 h-4 rounded-full border flex items-center justify-center text-[10px] transition-colors ${
-                      c.feito
-                        ? 'bg-[#6fa572] border-[#6fa572] text-white'
-                        : 'border-[#c9b3a5] text-transparent group-hover:border-[#6fa572]'
-                    }`}
-                  >
-                    ✓
-                  </span>
-                  <span
-                    className={`text-sm leading-snug ${
-                      c.feito
-                        ? 'text-[#8b6f5c] line-through'
-                        : 'text-[#2d2620]'
-                    }`}
-                  >
-                    {c.texto}
-                  </span>
-                </button>
+              <li key={c.id} className="flex items-start gap-2.5">
+                <span
+                  className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full"
+                  style={{ background: '#d4807a' }}
+                />
+                <span className="text-sm leading-snug text-[#2d2620]">
+                  {c.texto}
+                </span>
               </li>
             ))}
           </ul>
@@ -335,7 +286,8 @@ function FormularioObjetivo({
   const [horas, setHoras] = useState('')
   const [dinheiro, setDinheiro] = useState('')
   const [comportamentos, setComportamentos] = useState<Comportamento[]>([])
-  const [rascunho, setRascunho] = useState('')
+  const [ancora, setAncora] = useState('')
+  const [acao, setAcao] = useState('')
 
   const sugestoes = useMemo(() => {
     const conjunto = new Set<string>()
@@ -361,7 +313,15 @@ function FormularioObjetivo({
       ...prev,
       { id: novoId(), texto: t, feito: false },
     ])
-    setRascunho('')
+  }
+
+  function adicionarHabito() {
+    const a = ancora.trim()
+    const b = acao.trim()
+    if (!a || !b) return
+    adicionarComportamento(`Depois que eu ${a}, eu vou ${b}.`)
+    setAncora('')
+    setAcao('')
   }
 
   function salvar() {
@@ -423,47 +383,76 @@ function FormularioObjetivo({
       </div>
 
       {/* Recursos */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
+      <div className="space-y-3">
+        <div>
           <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-            Horas / semana
+            Quanto isso vai custar de você?
+          </label>
+          <p className="text-xs text-[#8b6f5c] mt-1 leading-relaxed">
+            Toda intenção consome dois recursos: o seu tempo e o seu dinheiro.
+            Estime — dá pra ajustar depois.
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2d2620]">
+            Tempo: horas por semana
           </label>
           <input
             value={horas}
             onChange={(e) => setHoras(e.target.value.replace(/[^\d.]/g, ''))}
             inputMode="decimal"
-            placeholder="0"
+            placeholder="Ex.: 5"
             className="w-full bg-[#fdeee4] border border-[#e8d8ce] rounded-xl px-3 py-2.5 text-[#2d2620] outline-none focus:border-[#d4807a]"
           />
+          <p className="text-xs text-[#8b6f5c]">
+            Quanto do seu tempo você vai dedicar a isso a cada semana.
+          </p>
         </div>
+
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-            R$ / mês
+          <label className="text-sm font-medium text-[#2d2620]">
+            Dinheiro: reais por mês{' '}
+            <span className="text-[#8b6f5c] font-normal">(opcional)</span>
           </label>
           <input
             value={dinheiro}
             onChange={(e) => setDinheiro(e.target.value.replace(/[^\d.]/g, ''))}
             inputMode="decimal"
-            placeholder="0"
+            placeholder="Ex.: 800"
             className="w-full bg-[#fdeee4] border border-[#e8d8ce] rounded-xl px-3 py-2.5 text-[#2d2620] outline-none focus:border-[#d4807a]"
           />
+          <p className="text-xs text-[#8b6f5c]">
+            Quanto do seu dinheiro você vai apontar pra cá todo mês — guardar,
+            investir ou gastar. Para uma casa, é o quanto você consegue separar
+            por mês rumo a ela. Se ainda não souber, deixe em branco.
+          </p>
         </div>
-      </div>
-      {economia && economia.vh > 0 && parseFloat(horas) > 0 && (
-        <p className="text-xs text-[#8b6f5c] -mt-2">
-          {formatarHoras(parseFloat(horas))} por semana valem cerca de{' '}
-          <strong className="text-[#2d2620]">
-            {formatarReais(parseFloat(horas) * economia.vh * 4.33)}
-          </strong>{' '}
-          do seu tempo por mês.
-        </p>
-      )}
 
-      {/* Comportamentos minúsculos */}
-      <div className="space-y-2">
-        <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-          Comportamentos minúsculos
-        </label>
+        {economia && economia.vh > 0 && parseFloat(horas) > 0 && (
+          <p className="text-xs text-[#8b6f5c] bg-[#fdeee4] rounded-lg px-3 py-2">
+            As {formatarHoras(parseFloat(horas))} por semana que você dedica a
+            isso equivalem a cerca de{' '}
+            <strong className="text-[#2d2620]">
+              {formatarReais(parseFloat(horas) * economia.vh * 4.33)}
+            </strong>{' '}
+            do seu tempo por mês.
+          </p>
+        )}
+      </div>
+
+      {/* Hábitos da intenção */}
+      <div className="space-y-3">
+        <div>
+          <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
+            Hábitos que levam até lá
+          </label>
+          <p className="text-xs text-[#8b6f5c] mt-1 leading-relaxed">
+            Um objetivo se realiza por hábitos minúsculos. Ancore cada um em
+            algo que você já faz todo dia.
+          </p>
+        </div>
+
         {comportamentos.length > 0 && (
           <ul className="space-y-1.5">
             {comportamentos.map((c) => (
@@ -478,7 +467,7 @@ function FormularioObjetivo({
                       prev.filter((x) => x.id !== c.id),
                     )
                   }
-                  aria-label="Remover comportamento"
+                  aria-label="Remover hábito"
                   className="text-[#8b6f5c] hover:text-[#a32d2d] shrink-0"
                 >
                   ✕
@@ -487,25 +476,42 @@ function FormularioObjetivo({
             ))}
           </ul>
         )}
-        <div className="flex gap-2">
-          <input
-            value={rascunho}
-            onChange={(e) => setRascunho(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                adicionarComportamento(rascunho)
-              }
-            }}
-            placeholder="Depois que eu…, eu vou…"
-            className="flex-1 bg-[#fdeee4] border border-[#e8d8ce] rounded-xl px-3 py-2.5 text-sm text-[#2d2620] outline-none focus:border-[#d4807a]"
-          />
+
+        <div className="space-y-2 bg-[#fdeee4] rounded-xl p-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#8b6f5c] whitespace-nowrap">
+              Depois que eu
+            </span>
+            <input
+              value={ancora}
+              onChange={(e) => setAncora(e.target.value)}
+              placeholder="tomar café"
+              className="flex-1 min-w-0 bg-white border border-[#e8d8ce] rounded-lg px-3 py-2 text-sm text-[#2d2620] outline-none focus:border-[#d4807a]"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#8b6f5c] whitespace-nowrap">
+              eu vou
+            </span>
+            <input
+              value={acao}
+              onChange={(e) => setAcao(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  adicionarHabito()
+                }
+              }}
+              placeholder="ler uma página sobre o negócio"
+              className="flex-1 min-w-0 bg-white border border-[#e8d8ce] rounded-lg px-3 py-2 text-sm text-[#2d2620] outline-none focus:border-[#d4807a]"
+            />
+          </div>
           <Button
-            onClick={() => adicionarComportamento(rascunho)}
-            disabled={!rascunho.trim()}
-            className="h-auto px-4 bg-[#f5d9c8] text-[#2d2620] hover:bg-[#efcdb6] rounded-xl"
+            onClick={adicionarHabito}
+            disabled={!ancora.trim() || !acao.trim()}
+            className="w-full h-10 bg-[#f5d9c8] text-[#2d2620] hover:bg-[#efcdb6] rounded-lg font-semibold disabled:opacity-40"
           >
-            +
+            Adicionar hábito
           </Button>
         </div>
         {sugestoes.length > 0 && (
