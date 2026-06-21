@@ -21,11 +21,18 @@ export function calcularIndicadores(dados: Partial<OnboardingData>): Indicadores
   const tab_rotina = dados.tab_rotina ?? 2
 
   // Fontes de receita — soma de todas. O valor da hora ponderado cai
-  // naturalmente de "dinheiro total ÷ tempo total vendido".
+  // naturalmente de "dinheiro total ÷ tempo total vendido". O tempo
+  // inclui o deslocamento: ele também é tempo que o trabalho consome.
   const fontes = dados.fontes ?? []
   const r = fontes.reduce((acc, f) => acc + (f.valorMensal || 0), 0)
-  const ra = fontes.reduce((acc, f) => acc + (f.atrito || 0), 0)
-  const tt = fontes.reduce((acc, f) => acc + (f.horasSemana || 0), 0)
+  const ra = fontes.reduce(
+    (acc, f) => acc + (f.custos ?? []).reduce((s, c) => s + (c.valor || 0), 0),
+    0,
+  )
+  const tt = fontes.reduce(
+    (acc, f) => acc + (f.horasTrabalho || 0) + (f.horasDeslocamento || 0),
+    0,
+  )
 
   // Tempo
   const tab_diario = tab_sono + tab_rotina

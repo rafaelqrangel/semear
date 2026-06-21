@@ -4,13 +4,20 @@
 
 export type TipoFonte = 'clt' | 'pj' | 'autonomo' | 'empresario' | 'outro'
 
+export interface CustoFonte {
+  id: string
+  nome: string
+  valor: number
+}
+
 export interface FonteReceita {
   id: string
-  nome: string         // ex.: "Salário", "Minha loja"
+  nome: string              // ex.: "Salário", "Minha loja"
   tipo: TipoFonte
-  valorMensal: number  // receita bruta mensal desta fonte
-  atrito: number       // impostos + custos para trabalhar nesta fonte
-  horasSemana: number  // horas dedicadas a esta fonte por semana
+  valorMensal: number       // receita bruta mensal desta fonte
+  horasTrabalho: number     // horas de trabalho efetivo por semana
+  horasDeslocamento: number // horas de deslocamento por semana
+  custos: CustoFonte[]      // impostos, benefícios e custos para trabalhar
 }
 
 export interface OnboardingData {
