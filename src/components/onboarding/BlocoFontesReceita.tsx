@@ -172,17 +172,17 @@ export function BlocoFontesReceita({
           </div>
 
           {indicadores.vh > 0 && (
-            <div className="p-4 rounded-xl bg-white border border-[#e8d8ce]">
-              <p className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest mb-1">
+            <div className="p-4 rounded-xl bg-white border border-[#e8d8ce] space-y-2">
+              <p className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">
                 Valor da hora (no conjunto)
               </p>
               <p className="text-[#2d2620] text-base">{fraseVh(indicadores.vh)}</p>
-              <p className="text-[#d4807a] font-bold text-2xl font-serif mt-1">
-                {formatarReais(indicadores.vh)}
-                <span className="text-base font-normal text-[#8b6f5c]">
-                  /hora
-                </span>
-              </p>
+              <ValorHoraDetalhe
+                bruto={indicadores.r}
+                liquido={indicadores.rl}
+                horasTrabalho={indicadores.ttTrabalho}
+                horasTotal={indicadores.tt}
+              />
             </div>
           )}
         </div>
@@ -213,6 +213,61 @@ export function BlocoFontesReceita({
 // Cartão de uma fonte já cadastrada
 // ------------------------------------------------------------
 
+/** Valor da hora bruto e líquido, em duas bases de tempo. */
+function ValorHoraDetalhe({
+  bruto,
+  liquido,
+  horasTrabalho,
+  horasTotal,
+}: {
+  bruto: number
+  liquido: number
+  horasTrabalho: number
+  horasTotal: number
+}) {
+  const porHora = (valor: number, horas: number) =>
+    horas > 0 ? formatarReais(valor / (horas * SEMANAS_POR_MES)) : '—'
+
+  const temDeslocamento = horasTotal > horasTrabalho
+
+  return (
+    <div className="space-y-2 pt-1">
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
+          Por hora trabalhada ({horasTrabalho}h/sem)
+        </p>
+        <p className="text-sm text-[#8b6f5c]">
+          Bruto{' '}
+          <strong className="text-[#2d2620]">
+            {porHora(bruto, horasTrabalho)}
+          </strong>{' '}
+          · Líquido{' '}
+          <strong className="text-[#d4807a]">
+            {porHora(liquido, horasTrabalho)}
+          </strong>
+        </p>
+      </div>
+      {temDeslocamento && (
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
+            Com deslocamento ({horasTotal}h/sem)
+          </p>
+          <p className="text-sm text-[#8b6f5c]">
+            Bruto{' '}
+            <strong className="text-[#2d2620]">
+              {porHora(bruto, horasTotal)}
+            </strong>{' '}
+            · Líquido{' '}
+            <strong className="text-[#d4807a]">
+              {porHora(liquido, horasTotal)}
+            </strong>
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CartaoFonte({
   fonte,
   onEditar,
@@ -224,8 +279,6 @@ function CartaoFonte({
 }) {
   const totalCustos = somaCustos(fonte.custos)
   const horas = fonte.horasTrabalho + fonte.horasDeslocamento
-  const vh =
-    horas > 0 ? (fonte.valorMensal - totalCustos) / (horas * SEMANAS_POR_MES) : 0
 
   return (
     <div className="bg-white border border-[#e8d8ce] rounded-xl p-4 space-y-1.5">
@@ -280,11 +333,13 @@ function CartaoFonte({
         </div>
       )}
 
-      {vh > 0 && (
-        <div className="text-xs text-[#8b6f5c] pt-0.5">
-          Sua hora aqui vale{' '}
-          <strong className="text-[#d4807a]">{formatarReais(vh)}</strong>
-        </div>
+      {horas > 0 && (
+        <ValorHoraDetalhe
+          bruto={fonte.valorMensal}
+          liquido={fonte.valorMensal - totalCustos}
+          horasTrabalho={fonte.horasTrabalho}
+          horasTotal={horas}
+        />
       )}
     </div>
   )

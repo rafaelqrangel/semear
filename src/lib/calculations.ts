@@ -29,10 +29,12 @@ export function calcularIndicadores(dados: Partial<OnboardingData>): Indicadores
     (acc, f) => acc + (f.custos ?? []).reduce((s, c) => s + (c.valor || 0), 0),
     0,
   )
-  const tt = fontes.reduce(
-    (acc, f) => acc + (f.horasTrabalho || 0) + (f.horasDeslocamento || 0),
+  const ttTrabalho = fontes.reduce((acc, f) => acc + (f.horasTrabalho || 0), 0)
+  const ttDeslocamento = fontes.reduce(
+    (acc, f) => acc + (f.horasDeslocamento || 0),
     0,
   )
+  const tt = ttTrabalho + ttDeslocamento // tempo total que o trabalho consome
 
   // Tempo
   const tab_diario = tab_sono + tab_rotina
@@ -49,12 +51,20 @@ export function calcularIndicadores(dados: Partial<OnboardingData>): Indicadores
   const c = m + v + d
   const saldo = rl - c - i
 
-  // Indicadores-chave
+  // Indicadores-chave. vh = valor da hora "real": líquido sobre o tempo
+  // total (com deslocamento). É o número mais honesto.
   const vh = tt > 0 ? rl / (tt * SEMANAS_POR_MES) : 0
+  const vhBruto = tt > 0 ? r / (tt * SEMANAS_POR_MES) : 0
+  const vhTrabalho =
+    ttTrabalho > 0 ? rl / (ttTrabalho * SEMANAS_POR_MES) : 0
   const renda_passiva = dados.renda_passiva ?? 0
   const gif = c > 0 ? (renda_passiva / c) * 100 : 0
 
-  return { tb: TB_SEMANAL, tab, tp, tr, tt, r, ra, rl, m, v, d, i, c, saldo, vh, gif }
+  return {
+    tb: TB_SEMANAL, tab, tp, tr, tt, ttTrabalho,
+    r, ra, rl, vhBruto, vhTrabalho,
+    m, v, d, i, c, saldo, vh, gif,
+  }
 }
 
 function somarDespesas(items: { valor: number }[]): number {

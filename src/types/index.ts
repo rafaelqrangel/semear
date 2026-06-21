@@ -54,12 +54,15 @@ export interface IndicadoresSemear {
   tab: number      // autocuidado semanal
   tp: number       // tempo produtivo semanal
   tr: number       // tempo restante semanal
-  tt: number       // horas de trabalho semanais (soma das fontes)
+  tt: number       // horas totais do trabalho (trabalho + deslocamento)
+  ttTrabalho: number // só horas de trabalho efetivo (sem deslocamento)
 
   // Financeiro
   r: number        // receita bruta total (soma das fontes)
   ra: number       // atrito total da receita
   rl: number       // receita líquida
+  vhBruto: number  // valor da hora bruto (sobre horas totais)
+  vhTrabalho: number // valor da hora líquido sobre horas de trabalho
   m: number        // manutenção total
   v: number        // vida total
   d: number        // desperdício total
