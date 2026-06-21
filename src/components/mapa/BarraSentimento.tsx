@@ -1,6 +1,11 @@
 'use client'
 
-import { SENTIMENTOS, nivelDaNota, rotuloDoNivel } from '@/lib/mapa'
+import {
+  SENTIMENTOS,
+  nivelDaNota,
+  rotuloDoNivel,
+  descricaoDoNivel,
+} from '@/lib/mapa'
 
 interface Props {
   cor: string
@@ -39,12 +44,19 @@ export function BarraSentimento({ cor, nota, onMudar, tamanho = 'md' }: Props) {
           )
         })}
       </div>
-      <p
-        className={`font-serif ${fonte}`}
-        style={{ color: nivel > 0 ? cor : '#8b6f5c' }}
-      >
-        {nivel > 0 ? rotuloDoNivel(nivel) : 'Toque para avaliar'}
-      </p>
+      <div>
+        <p
+          className={`font-serif ${fonte}`}
+          style={{ color: nivel > 0 ? cor : '#8b6f5c' }}
+        >
+          {nivel > 0 ? rotuloDoNivel(nivel) : 'Toque para avaliar'}
+        </p>
+        {nivel > 0 && (
+          <p className="text-sm text-[#8b6f5c] leading-relaxed mt-1">
+            {descricaoDoNivel(nivel)}
+          </p>
+        )}
+      </div>
     </div>
   )
 }

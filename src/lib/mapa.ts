@@ -114,10 +114,19 @@ export interface Objetivo {
   criadoEm: string
 }
 
+/** Uma avaliação da roda inteira, congelada num momento. */
+export interface AvaliacaoRoda {
+  id: string
+  data: string // ISO
+  pontuacoes: Partial<Record<FacetaId, number>>
+}
+
 export interface MapaState {
   objetivos: Objetivo[]
   // nota de 0 a 10 que a pessoa dá a cada faceta (coração da Roda da Vida)
   pontuacoes: Partial<Record<FacetaId, number>>
+  // histórico de avaliações da roda ao longo do tempo
+  historico: AvaliacaoRoda[]
 }
 
 /**
@@ -155,14 +164,45 @@ export interface Sentimento {
   nivel: number // 1..5
   nota: number // valor que preenche a roda
   rotulo: string
+  descricao: string // o que aquele nível significa
 }
 
 export const SENTIMENTOS: Sentimento[] = [
-  { nivel: 1, nota: 2, rotulo: 'Precisa de cuidado' },
-  { nivel: 2, nota: 4, rotulo: 'Frágil' },
-  { nivel: 3, nota: 6, rotulo: 'Mais ou menos' },
-  { nivel: 4, nota: 8, rotulo: 'Bem' },
-  { nivel: 5, nota: 10, rotulo: 'Florescendo' },
+  {
+    nivel: 1,
+    nota: 2,
+    rotulo: 'Precisa de cuidado',
+    descricao:
+      'Esta parte da sua vida está pedindo atenção. Algo aqui dói, falta ou foi deixado de lado.',
+  },
+  {
+    nivel: 2,
+    nota: 4,
+    rotulo: 'Frágil',
+    descricao:
+      'Está de pé, mas por um fio. Pequenos abalos já tiram do lugar — pede reforço.',
+  },
+  {
+    nivel: 3,
+    nota: 6,
+    rotulo: 'Mais ou menos',
+    descricao:
+      'Nem bem, nem mal. Funciona no automático, mas ainda não floresce.',
+  },
+  {
+    nivel: 4,
+    nota: 8,
+    rotulo: 'Bem',
+    descricao:
+      'Está num bom lugar. Há cuidado e equilíbrio aqui — vale manter o que sustenta isso.',
+  },
+  {
+    nivel: 5,
+    nota: 10,
+    rotulo: 'Florescendo',
+    descricao:
+      'Esta parte está plena e viva. É de onde transborda energia para o resto.',
+  },
 ]
 
 /** Nível (1..5) correspondente a uma nota; 0 = ainda não avaliado. */
@@ -173,6 +213,10 @@ export function nivelDaNota(nota: number): number {
 
 export function rotuloDoNivel(nivel: number): string {
   return SENTIMENTOS.find((s) => s.nivel === nivel)?.rotulo ?? ''
+}
+
+export function descricaoDoNivel(nivel: number): string {
+  return SENTIMENTOS.find((s) => s.nivel === nivel)?.descricao ?? ''
 }
 
 // ------------------------------------------------------------
@@ -222,7 +266,7 @@ export const SUGESTOES: Record<FacetaId, string[]> = {
 const CHAVE_MAPA = 'semear:mapa'
 const CHAVE_ECONOMIA = 'semear:economia'
 
-const ESTADO_VAZIO: MapaState = { objetivos: [], pontuacoes: {} }
+const ESTADO_VAZIO: MapaState = { objetivos: [], pontuacoes: {}, historico: [] }
 
 export function carregarMapa(): MapaState {
   if (typeof window === 'undefined') return ESTADO_VAZIO
@@ -233,6 +277,7 @@ export function carregarMapa(): MapaState {
     return {
       objetivos: parsed.objetivos ?? [],
       pontuacoes: parsed.pontuacoes ?? {},
+      historico: parsed.historico ?? [],
     }
   } catch {
     return ESTADO_VAZIO

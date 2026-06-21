@@ -11,6 +11,7 @@ import {
   SUGESTOES,
   facetaPorId,
   pontuacaoDe,
+  nivelDaNota,
   carregarMapa,
   salvarMapa,
   carregarEconomia,
@@ -21,12 +22,14 @@ import {
   type Comportamento,
   type Selecao,
   type EconomiaSnapshot,
+  type AvaliacaoRoda,
 } from '@/lib/mapa'
 import { formatarReais, formatarHoras } from '@/lib/calculations'
 
 export default function MapaPage() {
   const [objetivos, setObjetivos] = useState<Objetivo[]>([])
   const [pontuacoes, setPontuacoes] = useState<MapaState['pontuacoes']>({})
+  const [historico, setHistorico] = useState<AvaliacaoRoda[]>([])
   const [economia, setEconomia] = useState<EconomiaSnapshot | null>(null)
   const [selecao, setSelecao] = useState<Selecao>('intencao')
   const [pronto, setPronto] = useState(false)
@@ -36,17 +39,42 @@ export default function MapaPage() {
     const m = carregarMapa()
     setObjetivos(m.objetivos)
     setPontuacoes(m.pontuacoes)
+    setHistorico(m.historico)
     setEconomia(carregarEconomia())
     setPronto(true)
   }, [])
 
   // Persiste a cada mudança (após a carga inicial).
   useEffect(() => {
-    if (pronto) salvarMapa({ objetivos, pontuacoes })
-  }, [objetivos, pontuacoes, pronto])
+    if (pronto) salvarMapa({ objetivos, pontuacoes, historico })
+  }, [objetivos, pontuacoes, historico, pronto])
 
   function definirPontuacao(id: FacetaId, nota: number) {
     setPontuacoes((prev) => ({ ...prev, [id]: nota }))
+  }
+
+  // Quantas facetas já foram avaliadas hoje (na roda atual).
+  const facetasAvaliadas = FACETAS.filter(
+    (f) => (pontuacoes[f.id] ?? 0) > 0,
+  ).length
+
+  function registrarAvaliacao() {
+    if (facetasAvaliadas === 0) return
+    const hoje = new Date().toISOString().slice(0, 10)
+    const nova: AvaliacaoRoda = {
+      id: novoId(),
+      data: new Date().toISOString(),
+      pontuacoes: { ...pontuacoes },
+    }
+    setHistorico((prev) => {
+      // substitui a avaliação de hoje, se já houver uma
+      const semHoje = prev.filter((a) => a.data.slice(0, 10) !== hoje)
+      return [nova, ...semHoje]
+    })
+  }
+
+  function removerAvaliacao(id: string) {
+    setHistorico((prev) => prev.filter((a) => a.id !== id))
   }
 
   return (
@@ -82,6 +110,15 @@ export default function MapaPage() {
             onSelecionar={setSelecao}
           />
         </div>
+
+        {facetasAvaliadas > 0 && (
+          <PainelHistorico
+            historico={historico}
+            facetasAvaliadas={facetasAvaliadas}
+            onRegistrar={registrarAvaliacao}
+            onRemover={removerAvaliacao}
+          />
+        )}
 
         <div className="mt-6 animate-in-up" key={selecao}>
           {selecao === 'intencao' ? (
@@ -745,6 +782,140 @@ function PainelFaceta({
         </button>
       </div>
     </section>
+  )
+}
+
+// ============================================================
+// Histórico de avaliações da roda
+// ============================================================
+
+function mediaNivel(pont: MapaState['pontuacoes']): number {
+  const niveis = FACETAS.map((f) => nivelDaNota(pont[f.id] ?? 0)).filter(
+    (n) => n > 0,
+  )
+  if (niveis.length === 0) return 0
+  return niveis.reduce((a, b) => a + b, 0) / niveis.length
+}
+
+function MiniRoda({ pont }: { pont: MapaState['pontuacoes'] }) {
+  return (
+    <div className="flex gap-1">
+      {FACETAS.map((f) => {
+        const nivel = nivelDaNota(pont[f.id] ?? 0)
+        return (
+          <div
+            key={f.id}
+            title={f.nome}
+            className="flex-1 h-6 rounded-sm flex items-end overflow-hidden bg-[#f5d9c8]"
+          >
+            <div
+              className="w-full rounded-sm"
+              style={{
+                height: `${(nivel / 5) * 100}%`,
+                background: f.cor,
+                opacity: nivel > 0 ? 0.85 : 0,
+              }}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function PainelHistorico({
+  historico,
+  facetasAvaliadas,
+  onRegistrar,
+  onRemover,
+}: {
+  historico: AvaliacaoRoda[]
+  facetasAvaliadas: number
+  onRegistrar: () => void
+  onRemover: (id: string) => void
+}) {
+  const [aberto, setAberto] = useState(false)
+  const hoje = new Date().toISOString().slice(0, 10)
+  const jaRegistradoHoje = historico.some((a) => a.data.slice(0, 10) === hoje)
+
+  return (
+    <div className="mt-5 bg-white border border-[#e8d8ce] rounded-2xl p-4 space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
+            Sua roda no tempo
+          </p>
+          <p className="text-xs text-[#8b6f5c] mt-0.5">
+            {facetasAvaliadas} de {FACETAS.length} facetas avaliadas
+          </p>
+        </div>
+        {historico.length > 0 && (
+          <button
+            onClick={() => setAberto((v) => !v)}
+            className="text-[#d4807a] text-sm font-semibold hover:underline shrink-0"
+          >
+            {aberto ? 'Ocultar' : `Histórico (${historico.length})`}
+          </button>
+        )}
+      </div>
+
+      <Button
+        onClick={onRegistrar}
+        disabled={jaRegistradoHoje}
+        className="w-full h-11 font-semibold bg-[#6fa572] hover:bg-[#5e9162] text-white rounded-xl disabled:opacity-50"
+      >
+        {jaRegistradoHoje
+          ? 'Avaliação de hoje registrada ✓'
+          : 'Registrar avaliação de hoje'}
+      </Button>
+
+      {aberto && historico.length > 0 && (
+        <ul className="space-y-3 pt-1">
+          {historico.map((a, idx) => {
+            const media = mediaNivel(a.pontuacoes)
+            const anterior = historico[idx + 1]
+            const delta = anterior
+              ? media - mediaNivel(anterior.pontuacoes)
+              : 0
+            const data = new Date(a.data).toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+            return (
+              <li
+                key={a.id}
+                className="space-y-1.5 border-b border-[#f0e2d8] last:border-0 pb-3 last:pb-0"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-[#2d2620] font-medium">
+                    {data}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {anterior && Math.abs(delta) >= 0.05 && (
+                      <span
+                        className="text-xs font-semibold"
+                        style={{ color: delta > 0 ? '#2d7a4a' : '#a32d2d' }}
+                      >
+                        {delta > 0 ? '↑' : '↓'} {Math.abs(delta).toFixed(1)}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => onRemover(a.id)}
+                      aria-label="Remover avaliação"
+                      className="text-[#8b6f5c] hover:text-[#a32d2d]"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+                <MiniRoda pont={a.pontuacoes} />
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
   )
 }
 
