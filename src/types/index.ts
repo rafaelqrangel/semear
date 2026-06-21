@@ -2,20 +2,28 @@
 // Semear — Tipos centrais
 // ============================================================
 
+export type TipoFonte = 'clt' | 'pj' | 'autonomo' | 'empresario' | 'outro'
+
+export interface FonteReceita {
+  id: string
+  nome: string         // ex.: "Salário", "Minha loja"
+  tipo: TipoFonte
+  valorMensal: number  // receita bruta mensal desta fonte
+  atrito: number       // impostos + custos para trabalhar nesta fonte
+  horasSemana: number  // horas dedicadas a esta fonte por semana
+}
+
 export interface OnboardingData {
   // Bloco 1 — Identidade
   nome: string
   apelido: string
-  perfil: 'clt' | 'pj' | 'autonomo' | 'empresario' | ''
 
-  // Bloco 2 — Tempo
-  tt: number        // horas semanais de trabalho
+  // Bloco 2 — Fontes de receita (pode haver mais de uma)
+  fontes: FonteReceita[]
+
+  // Bloco 3 — Tempo (autocuidado)
   tab_sono: number  // horas de sono por dia
   tab_rotina: number // horas de alimentação + higiene por dia
-
-  // Bloco 3 — Recursos
-  r: number   // receita bruta mensal
-  ra: number  // atrito da receita (impostos + custos para trabalhar)
 
   // Bloco 4 — Manutenção (despesas fixas)
   despesas_fixas: DespesaItem[]
@@ -39,8 +47,11 @@ export interface IndicadoresSemear {
   tab: number      // autocuidado semanal
   tp: number       // tempo produtivo semanal
   tr: number       // tempo restante semanal
+  tt: number       // horas de trabalho semanais (soma das fontes)
 
   // Financeiro
+  r: number        // receita bruta total (soma das fontes)
+  ra: number       // atrito total da receita
   rl: number       // receita líquida
   m: number        // manutenção total
   v: number        // vida total

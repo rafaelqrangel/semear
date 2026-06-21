@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react'
 import { OnboardingData, OnboardingStep } from '@/types'
 import { Bloco1Identidade } from '@/components/onboarding/Bloco1Identidade'
+import { BlocoFontesReceita } from '@/components/onboarding/BlocoFontesReceita'
 import { Bloco2Tempo } from '@/components/onboarding/Bloco2Tempo'
-import { Bloco3Recursos } from '@/components/onboarding/Bloco3Recursos'
 import { Bloco4DespesasFixas } from '@/components/onboarding/Bloco4DespesasFixas'
 import { Bloco5DespesasVariaveis } from '@/components/onboarding/Bloco5DespesasVariaveis'
 import { ResultadoFinal } from '@/components/onboarding/ResultadoFinal'
@@ -12,12 +12,9 @@ import { ResultadoFinal } from '@/components/onboarding/ResultadoFinal'
 const DADOS_INICIAIS: OnboardingData = {
   nome: '',
   apelido: '',
-  perfil: '',
-  tt: 0,
+  fontes: [],
   tab_sono: 8,
   tab_rotina: 2,
-  r: 0,
-  ra: 0,
   despesas_fixas: [],
   despesas_variaveis: [],
   desperdicio: [],
@@ -80,7 +77,7 @@ export default function OnboardingPage() {
           />
         )}
         {etapa === 2 && (
-          <Bloco2Tempo
+          <BlocoFontesReceita
             dados={dados}
             onChange={atualizarDados}
             onAvancar={avancar}
@@ -88,7 +85,7 @@ export default function OnboardingPage() {
           />
         )}
         {etapa === 3 && (
-          <Bloco3Recursos
+          <Bloco2Tempo
             dados={dados}
             onChange={atualizarDados}
             onAvancar={avancar}

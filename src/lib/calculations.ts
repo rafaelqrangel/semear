@@ -17,11 +17,15 @@ export const TB_SEMANAL = HORAS_DIA * DIAS_SEMANA // 168h
  * Aceita dados parciais — campos ausentes retornam 0.
  */
 export function calcularIndicadores(dados: Partial<OnboardingData>): IndicadoresSemear {
-  const tt = dados.tt ?? 0
   const tab_sono = dados.tab_sono ?? 8
   const tab_rotina = dados.tab_rotina ?? 2
-  const r = dados.r ?? 0
-  const ra = dados.ra ?? 0
+
+  // Fontes de receita — soma de todas. O valor da hora ponderado cai
+  // naturalmente de "dinheiro total ÷ tempo total vendido".
+  const fontes = dados.fontes ?? []
+  const r = fontes.reduce((acc, f) => acc + (f.valorMensal || 0), 0)
+  const ra = fontes.reduce((acc, f) => acc + (f.atrito || 0), 0)
+  const tt = fontes.reduce((acc, f) => acc + (f.horasSemana || 0), 0)
 
   // Tempo
   const tab_diario = tab_sono + tab_rotina
@@ -43,7 +47,7 @@ export function calcularIndicadores(dados: Partial<OnboardingData>): Indicadores
   const renda_passiva = dados.renda_passiva ?? 0
   const gif = c > 0 ? (renda_passiva / c) * 100 : 0
 
-  return { tb: TB_SEMANAL, tab, tp, tr, rl, m, v, d, i, c, saldo, vh, gif }
+  return { tb: TB_SEMANAL, tab, tp, tr, tt, r, ra, rl, m, v, d, i, c, saldo, vh, gif }
 }
 
 function somarDespesas(items: { valor: number }[]): number {

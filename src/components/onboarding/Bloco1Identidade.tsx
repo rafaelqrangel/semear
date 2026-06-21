@@ -3,13 +3,6 @@
 import { OnboardingData } from '@/types'
 import { Button } from '@/components/ui/button'
 
-const PERFIS = [
-  { valor: 'clt', label: 'CLT', descricao: 'Empregado com carteira' },
-  { valor: 'pj', label: 'PJ', descricao: 'Pessoa jurídica' },
-  { valor: 'autonomo', label: 'Autônomo', descricao: 'Freelancer ou liberal' },
-  { valor: 'empresario', label: 'Empresário', descricao: 'Sócio ou dono de negócio' },
-] as const
-
 interface Props {
   dados: OnboardingData
   onChange: (parcial: Partial<OnboardingData>) => void
@@ -58,34 +51,6 @@ export function Bloco1Identidade({ dados, onChange, onAvancar }: Props) {
           onChange={e => onChange({ apelido: e.target.value })}
           className="w-full bg-white border border-[#e8d8ce] rounded-xl px-4 py-3 text-[#2d2620] text-base placeholder:text-[#ccc] focus:outline-none focus:border-[#d4807a] transition-colors"
         />
-      </div>
-
-      {/* Perfil profissional */}
-      <div className="space-y-3">
-        <label className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">
-          Situação profissional
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          {PERFIS.map(p => (
-            <button
-              key={p.valor}
-              type="button"
-              onClick={() => onChange({ perfil: p.valor })}
-              className={`
-                flex flex-col items-start p-4 rounded-xl border text-left transition-all
-                ${dados.perfil === p.valor
-                  ? 'bg-[#d4807a] border-[#d4807a] text-white'
-                  : 'bg-white border-[#e8d8ce] text-[#2d2620] hover:border-[#d4807a]'
-                }
-              `}
-            >
-              <span className="font-semibold text-sm">{p.label}</span>
-              <span className={`text-xs mt-0.5 ${dados.perfil === p.valor ? 'text-white/80' : 'text-[#8b6f5c]'}`}>
-                {p.descricao}
-              </span>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Botão */}

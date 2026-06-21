@@ -58,8 +58,8 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
       label: 'Receita real',
       valor: formatarReais(ind.rl),
       sub: 'por mês, de verdade',
-      detalhe: fraseRl(dados.r, ind.rl),
-      visivel: dados.r > 0,
+      detalhe: fraseRl(ind.r, ind.rl),
+      visivel: ind.r > 0,
     },
     {
       label: 'Valor da hora',
@@ -73,7 +73,7 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
       valor: formatarHoras(ind.tr),
       sub: 'por semana',
       detalhe: fraseTr(ind.tr),
-      visivel: dados.tt > 0,
+      visivel: ind.tt > 0,
     },
     {
       label: 'Saldo mensal',

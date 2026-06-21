@@ -15,9 +15,10 @@ interface Props {
 export function Bloco2Tempo({ dados, onChange, onAvancar, onVoltar }: Props) {
   const indicadores = calcularIndicadores(dados)
   const nome = dados.apelido || dados.nome || 'você'
-  const podeAvancar = dados.tt > 0
+  const podeAvancar = true
 
   const tr = indicadores.tr
+  const temTrabalho = indicadores.tt > 0
   const trNegativo = tr < 0
 
   return (
@@ -29,21 +30,10 @@ export function Bloco2Tempo({ dados, onChange, onAvancar, onVoltar }: Props) {
           <span className="font-serif-italic">que não se compra.</span>
         </h1>
         <p className="text-[#8b6f5c] text-base leading-relaxed">
-          Me conta como {nome} distribui as horas do dia.
+          Já sei quanto {nome} trabalha. Agora me conta o tempo que o corpo
+          pede todo dia.
         </p>
       </div>
-
-      {/* Horas de trabalho */}
-      <SliderInput
-        label="Quantas horas por semana você trabalha?"
-        value={dados.tt}
-        min={1}
-        max={80}
-        step={1}
-        unit="h/semana"
-        onChange={val => onChange({ tt: val })}
-        hint="Inclua horas extras e deslocamento obrigatório."
-      />
 
       {/* Sono */}
       <SliderInput
@@ -69,7 +59,7 @@ export function Bloco2Tempo({ dados, onChange, onAvancar, onVoltar }: Props) {
       />
 
       {/* Insight de tempo */}
-      {podeAvancar && (
+      {temTrabalho && (
         <div className={`
           p-4 rounded-xl border
           ${trNegativo
