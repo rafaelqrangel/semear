@@ -83,12 +83,20 @@ export default function MapaPage() {
         <span className="font-serif text-[#2d2620] text-xl tracking-wide">
           semear
         </span>
-        <Link
-          href="/onboarding"
-          className="text-[#8b6f5c] text-sm font-medium hover:text-[#2d2620]"
-        >
-          economia doméstica →
-        </Link>
+        <div className="flex flex-col items-end gap-0.5">
+          <Link
+            href="/registro"
+            className="text-[#d4807a] text-sm font-semibold hover:underline"
+          >
+            registrar gasto →
+          </Link>
+          <Link
+            href="/onboarding"
+            className="text-[#8b6f5c] text-xs font-medium hover:text-[#2d2620]"
+          >
+            economia doméstica →
+          </Link>
+        </div>
       </header>
 
       <main className="flex-1 px-6 pb-12 max-w-lg mx-auto w-full">

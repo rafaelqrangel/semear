@@ -15,6 +15,7 @@ import {
 } from '@/lib/calculations'
 import { Button } from '@/components/ui/button'
 import { salvarEconomia } from '@/lib/mapa'
+import { orcamentoDeOnboarding, salvarOrcamento } from '@/lib/registro'
 import Link from 'next/link'
 import { useEffect } from 'react'
 
@@ -51,7 +52,9 @@ export function ResultadoFinal({ dados, onVoltar }: Props) {
       i: ind.i,
       atualizadoEm: new Date().toISOString(),
     })
-  }, [ind.vh, ind.saldo, ind.gif, ind.rl, ind.tr, ind.m, ind.v, ind.d, ind.i])
+    // Orçamento (guarda-chuvas) — referência para o registro do dia a dia.
+    salvarOrcamento(orcamentoDeOnboarding(dados, ind.vh))
+  }, [dados, ind.vh, ind.saldo, ind.gif, ind.rl, ind.tr, ind.m, ind.v, ind.d, ind.i])
 
   const indicadoresCards = [
     {
