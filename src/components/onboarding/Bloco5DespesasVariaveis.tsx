@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ListaDespesas } from './ListaDespesas'
 import { MoneyInput } from './MoneyInput'
 
-const SUGESTOES_VIDA = ['Mercado', 'Restaurantes', 'Lazer', 'Roupas', 'Passeios', 'Farmácia', 'Transporte', 'Streaming']
+const SUGESTOES_VIDA = ['Mercado', 'Restaurantes', 'Viagem', 'Livros', 'Lazer', 'Roupas', 'Passeios', 'Streaming']
 const SUGESTOES_DESPERDICIO = ['Juros de cartão', 'Assinaturas esquecidas', 'Compras por impulso', 'Multas', 'Conveniências']
 
 interface Props {
@@ -28,10 +28,22 @@ export function Bloco5DespesasVariaveis({ dados, onChange, onAvancar, onVoltar }
       <div className="space-y-2">
         <h1 className="font-serif text-3xl text-[#2d2620] leading-tight">
           Como você<br />
-          <span className="font-serif-italic">escolhe gastar.</span>
+          <span className="font-serif-italic">transforma renda em vida.</span>
         </h1>
         <p className="text-[#8b6f5c] text-base leading-relaxed">
-          Gastos variáveis — o que muda todo mês, por escolha sua.
+          Aqui entram seus guarda-chuvas de gasto — Restaurantes, Viagem,
+          Livros. Some por categoria, não importa o meio de pagamento (cartão,
+          pix, débito) nem se acontece todo dia ou de vez em quando.
+        </p>
+      </div>
+
+      {/* Orientação sobre guarda-chuva */}
+      <div className="bg-white border border-[#e8d8ce] rounded-xl p-3">
+        <p className="text-[#8b6f5c] text-sm leading-relaxed">
+          Um jantar fora vai para <strong className="text-[#2d2620]">Restaurantes</strong>.
+          Um jantar durante uma viagem vai para{' '}
+          <strong className="text-[#2d2620]">Viagem</strong>. Você agrupa pelo
+          que aquilo significou na sua vida — não pela fatura.
         </p>
       </div>
 
@@ -39,12 +51,12 @@ export function Bloco5DespesasVariaveis({ dados, onChange, onAvancar, onVoltar }
       <div className="space-y-3">
         <div>
           <h3 className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">Vida</h3>
-          <p className="text-[#8b6f5c] text-xs mt-0.5">O que você gasta conscientemente para viver bem.</p>
+          <p className="text-[#8b6f5c] text-xs mt-0.5">O que você escolhe para viver bem — e que vale a pena.</p>
         </div>
         <ListaDespesas
           itens={dados.despesas_variaveis}
           onChange={itens => onChange({ despesas_variaveis: itens })}
-          placeholder="Ex: Mercado, lazer..."
+          placeholder="Ex: Restaurantes, Viagem, Livros..."
           sugestoes={SUGESTOES_VIDA}
         />
       </div>
@@ -53,7 +65,7 @@ export function Bloco5DespesasVariaveis({ dados, onChange, onAvancar, onVoltar }
       <div className="space-y-3">
         <div>
           <h3 className="text-[#8b6f5c] text-xs font-semibold uppercase tracking-widest">Desperdício</h3>
-          <p className="text-[#8b6f5c] text-xs mt-0.5">O que você mesmo reconhece como desnecessário. Sem julgamento — só honestidade.</p>
+          <p className="text-[#8b6f5c] text-xs mt-0.5">O que escoa sem virar vida: juros, multas, assinaturas esquecidas. Sem julgamento — só honestidade.</p>
         </div>
         <ListaDespesas
           itens={dados.desperdicio}

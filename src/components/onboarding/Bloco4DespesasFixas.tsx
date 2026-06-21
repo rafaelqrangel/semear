@@ -5,7 +5,7 @@ import { calcularIndicadores, formatarReais } from '@/lib/calculations'
 import { Button } from '@/components/ui/button'
 import { ListaDespesas } from './ListaDespesas'
 
-const SUGESTOES = ['Aluguel', 'Financiamento', 'Escola', 'Plano de saúde', 'Internet', 'Celular', 'Condomínio', 'IPTU', 'Previdência privada']
+const SUGESTOES = ['Moradia', 'Luz', 'Água', 'Gás', 'Internet', 'Escola', 'Plano de saúde', 'Condomínio', 'Financiamento', 'IPTU']
 
 interface Props {
   dados: OnboardingData
@@ -28,11 +28,22 @@ export function Bloco4DespesasFixas({ dados, onChange, onAvancar, onVoltar }: Pr
       {/* Título */}
       <div className="space-y-2">
         <h1 className="font-serif text-3xl text-[#2d2620] leading-tight">
-          O custo de<br />
-          <span className="font-serif-italic">existir com essa vida.</span>
+          O que mantém<br />
+          <span className="font-serif-italic">sua vida de pé.</span>
         </h1>
         <p className="text-[#8b6f5c] text-base leading-relaxed">
-          Gastos fixos e inevitáveis — o que você paga todo mês, aconteça o que acontecer.
+          Manutenção: as contas que sustentam a sua casa e a sua estrutura —
+          moradia, luz, água, escola, planos. Mesmo as que variam (luz, gás)
+          entram aqui: o que importa é o propósito, manter a vida funcionando.
+        </p>
+      </div>
+
+      {/* Orientação: guarda-chuva, não meio de pagamento */}
+      <div className="bg-white border border-[#e8d8ce] rounded-xl p-3">
+        <p className="text-[#8b6f5c] text-sm leading-relaxed">
+          Some por <strong className="text-[#2d2620]">guarda-chuva</strong> (a
+          conta), não pelo meio de pagamento. Tanto faz se você paga no cartão,
+          no pix ou no débito — o que conta é o destino.
         </p>
       </div>
 
@@ -40,7 +51,7 @@ export function Bloco4DespesasFixas({ dados, onChange, onAvancar, onVoltar }: Pr
       <ListaDespesas
         itens={dados.despesas_fixas}
         onChange={itens => onChange({ despesas_fixas: itens })}
-        placeholder="Ex: Aluguel, escola..."
+        placeholder="Ex: Moradia, luz, escola..."
         sugestoes={SUGESTOES}
       />
 
@@ -55,8 +66,8 @@ export function Bloco4DespesasFixas({ dados, onChange, onAvancar, onVoltar }: Pr
           </p>
           <p className={`text-base font-medium ${alertaAlto ? 'text-[#a32d2d]' : 'text-[#2d2620]'}`}>
             {alertaAlto
-              ? `Seus gastos fixos consomem ${Math.round(proporcao)}% da sua receita real. Pouco espaço para respirar.`
-              : `${Math.round(proporcao)}% da sua receita real vai para gastos fixos.`
+              ? `A sua manutenção consome ${Math.round(proporcao)}% da sua receita real. Pouco espaço para respirar.`
+              : `${Math.round(proporcao)}% da sua receita real vai para a manutenção.`
             }
           </p>
           <p className="font-serif text-2xl font-bold text-[#2d2620]">
@@ -68,7 +79,7 @@ export function Bloco4DespesasFixas({ dados, onChange, onAvancar, onVoltar }: Pr
       {/* Pular */}
       {dados.despesas_fixas.length === 0 && (
         <p className="text-center text-[#8b6f5c] text-sm">
-          Sem gastos fixos por enquanto? Tudo bem — você pode adicionar depois.
+          Sem contas de manutenção por enquanto? Tudo bem — dá para adicionar depois.
         </p>
       )}
 
