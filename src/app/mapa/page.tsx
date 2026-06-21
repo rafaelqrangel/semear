@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { Pencil, Trash2 } from 'lucide-react'
 import { MapaVida } from '@/components/mapa/MapaVida'
 import { BarraSentimento } from '@/components/mapa/BarraSentimento'
 import { Button } from '@/components/ui/button'
@@ -87,7 +88,13 @@ export default function MapaPage() {
             <PainelIntencao
               objetivos={objetivos}
               economia={economia}
-              onCriar={(o) => setObjetivos((prev) => [...prev, o])}
+              onSalvar={(o) =>
+                setObjetivos((prev) =>
+                  prev.some((x) => x.id === o.id)
+                    ? prev.map((x) => (x.id === o.id ? o : x))
+                    : [...prev, o],
+                )
+              }
               onRemover={(objId) =>
                 setObjetivos((prev) => prev.filter((o) => o.id !== objId))
               }
@@ -115,15 +122,16 @@ export default function MapaPage() {
 function PainelIntencao({
   objetivos,
   economia,
-  onCriar,
+  onSalvar,
   onRemover,
 }: {
   objetivos: Objetivo[]
   economia: EconomiaSnapshot | null
-  onCriar: (o: Objetivo) => void
+  onSalvar: (o: Objetivo) => void
   onRemover: (objId: string) => void
 }) {
   const [criando, setCriando] = useState(false)
+  const [editandoId, setEditandoId] = useState<string | null>(null)
 
   return (
     <section className="space-y-4">
@@ -143,14 +151,31 @@ function PainelIntencao({
 
       {objetivos.length > 0 && (
         <div className="space-y-3">
-          {objetivos.map((o) => (
-            <CartaoObjetivo
-              key={o.id}
-              objetivo={o}
-              economia={economia}
-              onRemover={onRemover}
-            />
-          ))}
+          {objetivos.map((o) =>
+            editandoId === o.id ? (
+              <FormularioObjetivo
+                key={o.id}
+                economia={economia}
+                inicial={o}
+                onSalvar={(x) => {
+                  onSalvar(x)
+                  setEditandoId(null)
+                }}
+                onCancelar={() => setEditandoId(null)}
+              />
+            ) : (
+              <CartaoObjetivo
+                key={o.id}
+                objetivo={o}
+                economia={economia}
+                onEditar={() => {
+                  setCriando(false)
+                  setEditandoId(o.id)
+                }}
+                onRemover={onRemover}
+              />
+            ),
+          )}
         </div>
       )}
 
@@ -158,14 +183,17 @@ function PainelIntencao({
         <FormularioObjetivo
           economia={economia}
           onSalvar={(o) => {
-            onCriar(o)
+            onSalvar(o)
             setCriando(false)
           }}
           onCancelar={() => setCriando(false)}
         />
       ) : (
         <Button
-          onClick={() => setCriando(true)}
+          onClick={() => {
+            setEditandoId(null)
+            setCriando(true)
+          }}
           className="w-full h-14 text-base font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl"
         >
           {objetivos.length === 0
@@ -180,10 +208,12 @@ function PainelIntencao({
 function CartaoObjetivo({
   objetivo,
   economia,
+  onEditar,
   onRemover,
 }: {
   objetivo: Objetivo
   economia: EconomiaSnapshot | null
+  onEditar: () => void
   onRemover: (objId: string) => void
 }) {
   const custoHoras =
@@ -213,13 +243,22 @@ function CartaoObjetivo({
             })}
           </div>
         </div>
-        <button
-          onClick={() => onRemover(objetivo.id)}
-          aria-label="Remover intenção"
-          className="text-[#8b6f5c] hover:text-[#a32d2d] text-sm shrink-0"
-        >
-          ✕
-        </button>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={onEditar}
+            aria-label="Editar intenção"
+            className="text-[#8b6f5c] hover:text-[#2d2620] p-1 rounded-md hover:bg-[#fdeee4]"
+          >
+            <Pencil size={15} />
+          </button>
+          <button
+            onClick={() => onRemover(objetivo.id)}
+            aria-label="Remover intenção"
+            className="text-[#8b6f5c] hover:text-[#a32d2d] p-1 rounded-md hover:bg-[#fdeee4]"
+          >
+            <Trash2 size={15} />
+          </button>
+        </div>
       </div>
 
       {/* Recursos consumidos */}
@@ -274,18 +313,27 @@ function CartaoObjetivo({
 
 function FormularioObjetivo({
   economia,
+  inicial,
   onSalvar,
   onCancelar,
 }: {
   economia: EconomiaSnapshot | null
+  inicial?: Objetivo
   onSalvar: (o: Objetivo) => void
   onCancelar: () => void
 }) {
-  const [titulo, setTitulo] = useState('')
-  const [facetas, setFacetas] = useState<FacetaId[]>([])
-  const [horas, setHoras] = useState('')
-  const [dinheiro, setDinheiro] = useState('')
-  const [comportamentos, setComportamentos] = useState<Comportamento[]>([])
+  const editando = !!inicial
+  const [titulo, setTitulo] = useState(inicial?.titulo ?? '')
+  const [facetas, setFacetas] = useState<FacetaId[]>(inicial?.facetas ?? [])
+  const [horas, setHoras] = useState(
+    inicial?.horasSemana ? String(inicial.horasSemana) : '',
+  )
+  const [dinheiro, setDinheiro] = useState(
+    inicial?.dinheiroMes ? String(inicial.dinheiroMes) : '',
+  )
+  const [comportamentos, setComportamentos] = useState<Comportamento[]>(
+    inicial?.comportamentos ?? [],
+  )
   const [ancora, setAncora] = useState('')
   const [acao, setAcao] = useState('')
 
@@ -327,20 +375,20 @@ function FormularioObjetivo({
   function salvar() {
     if (!podeSalvar) return
     onSalvar({
-      id: novoId(),
+      id: inicial?.id ?? novoId(),
       titulo: titulo.trim(),
       facetas,
       horasSemana: parseFloat(horas) || 0,
       dinheiroMes: parseFloat(dinheiro) || 0,
       comportamentos,
-      criadoEm: new Date().toISOString(),
+      criadoEm: inicial?.criadoEm ?? new Date().toISOString(),
     })
   }
 
   return (
     <div className="bg-white border border-[#e8d8ce] rounded-2xl p-5 space-y-5">
       <h3 className="font-serif text-lg text-[#2d2620]">
-        Compilar uma intenção
+        {editando ? 'Editar intenção' : 'Compilar uma intenção'}
       </h3>
 
       {/* Objetivo */}
@@ -539,7 +587,7 @@ function FormularioObjetivo({
           disabled={!podeSalvar}
           className="flex-1 h-12 font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl disabled:opacity-40"
         >
-          Compilar intenção
+          {editando ? 'Salvar alterações' : 'Compilar intenção'}
         </Button>
         <Button
           variant="ghost"
