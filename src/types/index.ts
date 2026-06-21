@@ -15,8 +15,8 @@ export interface FonteReceita {
   nome: string              // ex.: "Salário", "Minha loja"
   tipo: TipoFonte
   valorMensal: number       // receita bruta mensal desta fonte
-  horasTrabalho: number     // horas de trabalho efetivo por semana
-  horasDeslocamento: number // horas de deslocamento por semana
+  horasTrabalhoMes: number     // horas de trabalho efetivo por mês
+  horasDeslocamentoMes: number // horas de deslocamento por mês
   custos: CustoFonte[]      // impostos, benefícios e custos para trabalhar
 }
 
@@ -54,14 +54,15 @@ export interface IndicadoresSemear {
   tab: number      // autocuidado semanal
   tp: number       // tempo produtivo semanal
   tr: number       // tempo restante semanal
-  tt: number       // horas totais do trabalho (trabalho + deslocamento)
-  ttTrabalho: number // só horas de trabalho efetivo (sem deslocamento)
+  tt: number       // horas semanais totais do trabalho (para o tempo livre)
+  ttMes: number    // horas mensais totais (trabalho + deslocamento)
+  ttTrabalhoMes: number // horas mensais só de trabalho efetivo
 
   // Financeiro
   r: number        // receita bruta total (soma das fontes)
   ra: number       // atrito total da receita
   rl: number       // receita líquida
-  vhBruto: number  // valor da hora bruto (sobre horas totais)
+  vhBruto: number  // valor da hora bruto (sobre horas mensais totais)
   vhTrabalho: number // valor da hora líquido sobre horas de trabalho
   m: number        // manutenção total
   v: number        // vida total

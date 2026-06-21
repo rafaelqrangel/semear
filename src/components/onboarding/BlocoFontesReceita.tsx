@@ -16,8 +16,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 
-const SEMANAS_POR_MES = 4.33
-
 const TIPOS: { valor: TipoFonte; label: string }[] = [
   { valor: 'clt', label: 'CLT' },
   { valor: 'pj', label: 'PJ' },
@@ -180,8 +178,8 @@ export function BlocoFontesReceita({
               <ValorHoraDetalhe
                 bruto={indicadores.r}
                 liquido={indicadores.rl}
-                horasTrabalho={indicadores.ttTrabalho}
-                horasTotal={indicadores.tt}
+                horasTrabalhoMes={indicadores.ttTrabalhoMes}
+                horasTotalMes={indicadores.ttMes}
               />
             </div>
           )}
@@ -213,54 +211,53 @@ export function BlocoFontesReceita({
 // Cartão de uma fonte já cadastrada
 // ------------------------------------------------------------
 
-/** Valor da hora bruto e líquido, em duas bases de tempo. */
+/** Valor da hora bruto e líquido, em duas bases — tudo por mês. */
 function ValorHoraDetalhe({
   bruto,
   liquido,
-  horasTrabalho,
-  horasTotal,
+  horasTrabalhoMes,
+  horasTotalMes,
 }: {
   bruto: number
   liquido: number
-  horasTrabalho: number
-  horasTotal: number
+  horasTrabalhoMes: number
+  horasTotalMes: number
 }) {
   const porHora = (valor: number, horas: number) =>
-    horas > 0 ? formatarReais(valor / (horas * SEMANAS_POR_MES)) : '—'
-  const horasMes = (horas: number) => Math.round(horas * SEMANAS_POR_MES)
+    horas > 0 ? formatarReais(valor / horas) : '—'
 
-  const temDeslocamento = horasTotal > horasTrabalho
+  const temDeslocamento = horasTotalMes > horasTrabalhoMes
 
   return (
     <div className="space-y-2 pt-1">
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-          Por hora trabalhada ({horasTrabalho}h/sem ≈ {horasMes(horasTrabalho)}h/mês)
+          Por hora trabalhada ({horasTrabalhoMes}h/mês)
         </p>
         <p className="text-sm text-[#8b6f5c]">
           Bruto{' '}
           <strong className="text-[#2d2620]">
-            {porHora(bruto, horasTrabalho)}
+            {porHora(bruto, horasTrabalhoMes)}
           </strong>{' '}
           · Líquido{' '}
           <strong className="text-[#d4807a]">
-            {porHora(liquido, horasTrabalho)}
+            {porHora(liquido, horasTrabalhoMes)}
           </strong>
         </p>
       </div>
       {temDeslocamento && (
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-            Com deslocamento ({horasTotal}h/sem ≈ {horasMes(horasTotal)}h/mês)
+            Com deslocamento ({horasTotalMes}h/mês)
           </p>
           <p className="text-sm text-[#8b6f5c]">
             Bruto{' '}
             <strong className="text-[#2d2620]">
-              {porHora(bruto, horasTotal)}
+              {porHora(bruto, horasTotalMes)}
             </strong>{' '}
             · Líquido{' '}
             <strong className="text-[#d4807a]">
-              {porHora(liquido, horasTotal)}
+              {porHora(liquido, horasTotalMes)}
             </strong>
           </p>
         </div>
@@ -279,7 +276,7 @@ function CartaoFonte({
   onRemover: () => void
 }) {
   const totalCustos = somaCustos(fonte.custos)
-  const horas = fonte.horasTrabalho + fonte.horasDeslocamento
+  const horasMes = fonte.horasTrabalhoMes + fonte.horasDeslocamentoMes
 
   return (
     <div className="bg-white border border-[#e8d8ce] rounded-xl p-4 space-y-1.5">
@@ -318,11 +315,11 @@ function CartaoFonte({
       </div>
 
       <div className="text-xs text-[#8b6f5c]">
-        {fonte.horasTrabalho}h de trabalho
-        {fonte.horasDeslocamento > 0 && (
-          <> + {fonte.horasDeslocamento}h de deslocamento</>
+        {fonte.horasTrabalhoMes}h de trabalho
+        {fonte.horasDeslocamentoMes > 0 && (
+          <> + {fonte.horasDeslocamentoMes}h de deslocamento</>
         )}{' '}
-        por semana
+        por mês
       </div>
 
       {totalCustos > 0 && (
@@ -334,12 +331,12 @@ function CartaoFonte({
         </div>
       )}
 
-      {horas > 0 && (
+      {horasMes > 0 && (
         <ValorHoraDetalhe
           bruto={fonte.valorMensal}
           liquido={fonte.valorMensal - totalCustos}
-          horasTrabalho={fonte.horasTrabalho}
-          horasTotal={horas}
+          horasTrabalhoMes={fonte.horasTrabalhoMes}
+          horasTotalMes={horasMes}
         />
       )}
     </div>
@@ -368,10 +365,10 @@ function FormularioFonte({
     inicial?.valorMensal ? String(inicial.valorMensal) : '',
   )
   const [horasTrabalho, setHorasTrabalho] = useState(
-    inicial?.horasTrabalho ? String(inicial.horasTrabalho) : '',
+    inicial?.horasTrabalhoMes ? String(inicial.horasTrabalhoMes) : '',
   )
   const [horasDeslocamento, setHorasDeslocamento] = useState(
-    inicial?.horasDeslocamento ? String(inicial.horasDeslocamento) : '',
+    inicial?.horasDeslocamentoMes ? String(inicial.horasDeslocamentoMes) : '',
   )
   const [custos, setCustos] = useState<CustoFonte[]>(inicial?.custos ?? [])
   const [custoNome, setCustoNome] = useState('')
@@ -399,8 +396,8 @@ function FormularioFonte({
       nome: nome.trim(),
       tipo,
       valorMensal: valorNum,
-      horasTrabalho: trabNum,
-      horasDeslocamento: deslNum,
+      horasTrabalhoMes: trabNum,
+      horasDeslocamentoMes: deslNum,
       custos,
     })
   }
@@ -464,11 +461,11 @@ function FormularioFonte({
         </div>
       </div>
 
-      {/* Horas: trabalho + deslocamento */}
+      {/* Horas: trabalho + deslocamento (por mês) */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-[11px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-            Horas de trabalho
+            Trabalho / mês
           </label>
           <div className="flex items-center bg-white border border-[#e8d8ce] rounded-xl px-3 py-2.5 focus-within:border-[#d4807a]">
             <input
@@ -480,12 +477,12 @@ function FormularioFonte({
               }
               className="w-full bg-transparent text-[#2d2620] outline-none placeholder:text-[#ccc]"
             />
-            <span className="text-[#8b6f5c] text-sm ml-1">h/sem</span>
+            <span className="text-[#8b6f5c] text-sm ml-1">h/mês</span>
           </div>
         </div>
         <div className="space-y-1">
           <label className="text-[11px] font-semibold uppercase tracking-wide text-[#8b6f5c]">
-            Deslocamento
+            Deslocamento / mês
           </label>
           <div className="flex items-center bg-white border border-[#e8d8ce] rounded-xl px-3 py-2.5 focus-within:border-[#d4807a]">
             <input
@@ -497,27 +494,19 @@ function FormularioFonte({
               }
               className="w-full bg-transparent text-[#2d2620] outline-none placeholder:text-[#ccc]"
             />
-            <span className="text-[#8b6f5c] text-sm ml-1">h/sem</span>
+            <span className="text-[#8b6f5c] text-sm ml-1">h/mês</span>
           </div>
         </div>
       </div>
       <p className="text-xs text-[#8b6f5c] -mt-2">
-        O deslocamento também é tempo que o trabalho consome — ele entra na
-        conta da sua hora real.
+        Tudo no mês, na mesma base da renda. Uma jornada de ~40h por semana dá
+        cerca de 176h por mês. O deslocamento também conta — é tempo que o
+        trabalho consome.
       </p>
-      {trabNum + deslNum > 0 && (
+      {tipo !== 'clt' && (
         <p className="text-xs text-[#8b6f5c] -mt-1 bg-white border border-[#e8d8ce] rounded-lg px-3 py-2">
-          No mês isso dá{' '}
-          <strong className="text-[#2d2620]">
-            ≈ {Math.round(trabNum * SEMANAS_POR_MES)}h de trabalho
-          </strong>
-          {deslNum > 0 && (
-            <>
-              {' '}
-              + {Math.round(deslNum * SEMANAS_POR_MES)}h de deslocamento
-            </>
-          )}{' '}
-          (semana × 4,33). É por esse total que o valor da hora é dividido.
+          Renda irregular? Estime uma média mensal. As contas da vida (aluguel,
+          luz, escola) são mensais — a sua hora também precisa ser.
         </p>
       )}
 
