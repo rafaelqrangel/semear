@@ -1,19 +1,22 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BottomNav } from '@/components/BottomNav'
 import { formatarReais, formatarHoras } from '@/lib/calculations'
 import {
   CAIXAS,
   carregarOrcamento,
   carregarGastos,
   salvarGastos,
+  salvarOrcamento,
   gastoDoItemNoMes,
   horasDeVida,
   mesmoMes,
   novoId,
+  type Caixa,
   type Orcamento,
   type Gasto,
   type ItemOrcamento,
@@ -34,27 +37,33 @@ export default function RegistroPage() {
     if (pronto) salvarGastos(gastos)
   }, [gastos, pronto])
 
+  useEffect(() => {
+    if (pronto && orcamento) salvarOrcamento(orcamento)
+  }, [orcamento, pronto])
+
   function registrar(g: Gasto) {
     setGastos((prev) => [g, ...prev])
   }
   function remover(id: string) {
     setGastos((prev) => prev.filter((g) => g.id !== id))
   }
+  // Cria uma categoria nova na hora do registro (sem reserva definida).
+  function criarCategoria(nome: string, caixa: Caixa): ItemOrcamento {
+    const item: ItemOrcamento = { id: novoId(), nome, caixa, orcado: 0 }
+    setOrcamento((prev) =>
+      prev ? { ...prev, itens: [...prev.itens, item] } : prev,
+    )
+    return item
+  }
 
   const vh = orcamento?.vh ?? 0
 
   return (
-    <div className="min-h-screen bg-[#fdeee4] flex flex-col">
-      <header className="px-6 pt-8 pb-2 flex items-center justify-between max-w-lg mx-auto w-full">
+    <div className="min-h-screen bg-[#fdeee4] flex flex-col pb-24">
+      <header className="px-6 pt-8 pb-2 max-w-lg mx-auto w-full">
         <span className="font-serif text-[#2d2620] text-xl tracking-wide">
           semear
         </span>
-        <Link
-          href="/mapa"
-          className="text-[#8b6f5c] text-sm font-medium hover:text-[#2d2620]"
-        >
-          ← a roda
-        </Link>
       </header>
 
       <main className="flex-1 px-6 pb-12 max-w-lg mx-auto w-full">
@@ -80,6 +89,7 @@ export default function RegistroPage() {
               orcamento={orcamento}
               gastos={gastos}
               onRegistrar={registrar}
+              onCriarCategoria={criarCategoria}
             />
             <Espelho orcamento={orcamento} gastos={gastos} />
             <Recentes
@@ -90,6 +100,8 @@ export default function RegistroPage() {
           </>
         )}
       </main>
+
+      <BottomNav />
     </div>
   )
 }
@@ -98,11 +110,11 @@ function EstadoVazio() {
   return (
     <div className="bg-white border border-[#e8d8ce] rounded-2xl p-6 text-center space-y-3">
       <p className="text-[#2d2620] font-serif text-xl">
-        Primeiro, seus guarda-chuvas.
+        Primeiro, suas categorias.
       </p>
       <p className="text-[#8b6f5c] text-sm leading-relaxed">
         O registro compara o seu dia a dia com o que você planejou. Faça o
-        diagnóstico para definir seus guarda-chuvas de gasto.
+        diagnóstico para definir suas categorias de gasto.
       </p>
       <Link href="/onboarding">
         <Button className="w-full h-12 font-semibold bg-[#d4807a] hover:bg-[#c46e68] text-white rounded-xl mt-1">
@@ -121,16 +133,22 @@ function FormularioGasto({
   orcamento,
   gastos,
   onRegistrar,
+  onCriarCategoria,
 }: {
   orcamento: Orcamento
   gastos: Gasto[]
   onRegistrar: (g: Gasto) => void
+  onCriarCategoria: (nome: string, caixa: Caixa) => ItemOrcamento
 }) {
   const [valor, setValor] = useState('')
   const [itemId, setItemId] = useState<string | null>(null)
+  const [novaNome, setNovaNome] = useState('')
+  const [novaCaixa, setNovaCaixa] = useState<Caixa>('vida')
+  const [criandoNova, setCriandoNova] = useState(false)
   const [ultimo, setUltimo] = useState<{ horas: number; nome: string } | null>(
     null,
   )
+  const refConfirmacao = useRef<HTMLDivElement | null>(null)
 
   // Registro diário é só das escolhas ativas: Vida e Desperdício.
   // Manutenção é um bloco mensal, não um lançamento do dia a dia.
@@ -140,10 +158,11 @@ function FormularioGasto({
 
   const valorNum = parseInt(valor.replace(/\D/g, '') || '0', 10)
   const item = itensAtivos.find((i) => i.id === itemId) ?? null
-  const podeRegistrar = valorNum > 0 && !!item
+  const usandoNova = criandoNova && novaNome.trim().length > 0
+  const podeRegistrar = valorNum > 0 && (!!item || usandoNova)
   const horas = horasDeVida(valorNum, orcamento.vh)
 
-  // Horas que restam no guarda-chuva escolhido, depois deste gasto.
+  // Horas que restam na categoria escolhida, depois deste gasto.
   const restanteAposH = item
     ? horasDeVida(
         item.orcado - gastoDoItemNoMes(item.id, gastos) - valorNum,
@@ -151,19 +170,34 @@ function FormularioGasto({
       )
     : 0
 
+  // Faz a confirmação saltar à vista quando um gasto é registrado.
+  useEffect(() => {
+    if (ultimo)
+      refConfirmacao.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
+  }, [ultimo])
+
   function registrar() {
-    if (!podeRegistrar || !item) return
+    if (!podeRegistrar) return
+    const alvo: ItemOrcamento | null = usandoNova
+      ? onCriarCategoria(novaNome.trim(), novaCaixa)
+      : item
+    if (!alvo) return
     onRegistrar({
       id: novoId(),
       data: new Date().toISOString(),
-      nome: item.nome,
+      nome: alvo.nome,
       valor: valorNum,
-      itemId: item.id,
-      caixa: item.caixa,
+      itemId: alvo.id,
+      caixa: alvo.caixa,
     })
-    setUltimo({ horas: horasDeVida(valorNum, orcamento.vh), nome: item.nome })
+    setUltimo({ horas: horasDeVida(valorNum, orcamento.vh), nome: alvo.nome })
     setValor('')
     setItemId(null)
+    setNovaNome('')
+    setCriandoNova(false)
   }
 
   return (
@@ -196,20 +230,21 @@ function FormularioGasto({
         )}
       </div>
 
-      {/* Guarda-chuva */}
+      {/* Categoria */}
       <div className="space-y-1.5">
         <label className="text-[11px] font-semibold uppercase tracking-widest text-[#8b6f5c]">
-          Em qual guarda-chuva?
+          Em qual categoria?
         </label>
         <div className="flex flex-wrap gap-2">
           {itensAtivos.map((i) => {
             const cor = CAIXAS[i.caixa].cor
-            const ativo = itemId === i.id
+            const ativo = itemId === i.id && !criandoNova
             return (
               <button
                 key={i.id}
                 onClick={() => {
                   setItemId(i.id)
+                  setCriandoNova(false)
                   setUltimo(null)
                 }}
                 className="text-sm font-semibold px-3 py-1.5 rounded-full border transition-colors"
@@ -223,7 +258,54 @@ function FormularioGasto({
               </button>
             )
           })}
+          <button
+            onClick={() => {
+              setCriandoNova((v) => !v)
+              setItemId(null)
+              setUltimo(null)
+            }}
+            className="text-sm font-semibold px-3 py-1.5 rounded-full border border-dashed transition-colors"
+            style={{
+              background: criandoNova ? '#f5d9c8' : 'transparent',
+              color: '#8b6f5c',
+              borderColor: '#c9b3a5',
+            }}
+          >
+            + nova
+          </button>
         </div>
+
+        {/* Criar categoria na hora */}
+        {criandoNova && (
+          <div className="space-y-2 pt-1">
+            <input
+              autoFocus
+              value={novaNome}
+              onChange={(e) => setNovaNome(e.target.value)}
+              placeholder="Nome (ex.: Viagem, Cursos...)"
+              className="w-full bg-[#fdeee4] border border-[#e8d8ce] rounded-xl px-3 py-2.5 text-sm text-[#2d2620] outline-none focus:border-[#d4807a]"
+            />
+            <div className="flex gap-2">
+              {(['vida', 'desperdicio'] as Caixa[]).map((cx) => {
+                const ativo = novaCaixa === cx
+                return (
+                  <button
+                    key={cx}
+                    onClick={() => setNovaCaixa(cx)}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors"
+                    style={{
+                      background: ativo ? CAIXAS[cx].cor : 'transparent',
+                      color: ativo ? '#fff' : CAIXAS[cx].cor,
+                      borderColor: CAIXAS[cx].cor,
+                    }}
+                  >
+                    {CAIXAS[cx].nome}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Projeção em horas de vida no guarda-chuva */}
@@ -259,11 +341,14 @@ function FormularioGasto({
         Registrar gasto
       </Button>
 
-      {/* Celebração discreta do passo */}
+      {/* Celebração do passo — salta à vista após registrar */}
       {ultimo && (
-        <div className="bg-[#e8f4eb] border border-[#6fa572] rounded-xl px-4 py-3 animate-in-up">
+        <div
+          ref={refConfirmacao}
+          className="bg-[#e8f4eb] border border-[#6fa572] rounded-xl px-4 py-3 animate-in-up"
+        >
           <p className="text-sm text-[#2d7a4a]">
-            Registrado em <strong>{ultimo.nome}</strong> —{' '}
+            ✓ Registrado em <strong>{ultimo.nome}</strong> —{' '}
             {formatarHoras(ultimo.horas)} da sua vida, agora conscientes.
           </p>
         </div>

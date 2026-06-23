@@ -31,7 +31,7 @@ export function Bloco5DespesasVariaveis({ dados, onChange, onAvancar, onVoltar }
           <span className="font-serif-italic">transforma renda em vida.</span>
         </h1>
         <p className="text-[#8b6f5c] text-base leading-relaxed">
-          Aqui entram seus guarda-chuvas de gasto — Restaurantes, Viagem,
+          Aqui entram suas categorias de gasto — Restaurantes, Viagem,
           Livros. Some por categoria, não importa o meio de pagamento (cartão,
           pix, débito) nem se acontece todo dia ou de vez em quando.
         </p>

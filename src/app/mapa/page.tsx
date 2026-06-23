@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Pencil, Trash2 } from 'lucide-react'
 import { MapaVida } from '@/components/mapa/MapaVida'
 import { BarraSentimento } from '@/components/mapa/BarraSentimento'
+import { BottomNav } from '@/components/BottomNav'
 import { Button } from '@/components/ui/button'
 import {
   FACETAS,
@@ -33,6 +34,20 @@ export default function MapaPage() {
   const [economia, setEconomia] = useState<EconomiaSnapshot | null>(null)
   const [selecao, setSelecao] = useState<Selecao>('intencao')
   const [pronto, setPronto] = useState(false)
+  const painelRef = useRef<HTMLDivElement | null>(null)
+  const jaInteragiu = useRef(false)
+
+  // Ao tocar numa faceta ou no centro, leva o painel correspondente
+  // à vista — senão a interação parece "morta" abaixo da dobra.
+  function selecionar(s: Selecao) {
+    jaInteragiu.current = true
+    setSelecao(s)
+  }
+  useEffect(() => {
+    if (jaInteragiu.current) {
+      painelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [selecao])
 
   // Carrega do armazenamento local na montagem.
   useEffect(() => {
@@ -78,25 +93,11 @@ export default function MapaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fdeee4] flex flex-col">
+    <div className="min-h-screen bg-[#fdeee4] flex flex-col pb-24">
       <header className="px-6 pt-8 pb-2 flex items-center justify-between max-w-lg mx-auto w-full">
         <span className="font-serif text-[#2d2620] text-xl tracking-wide">
           semear
         </span>
-        <div className="flex flex-col items-end gap-0.5">
-          <Link
-            href="/registro"
-            className="text-[#d4807a] text-sm font-semibold hover:underline"
-          >
-            registrar gasto →
-          </Link>
-          <Link
-            href="/onboarding"
-            className="text-[#8b6f5c] text-xs font-medium hover:text-[#2d2620]"
-          >
-            economia doméstica →
-          </Link>
-        </div>
       </header>
 
       <main className="flex-1 px-6 pb-12 max-w-lg mx-auto w-full">
@@ -115,9 +116,14 @@ export default function MapaPage() {
             pontuacoes={pontuacoes}
             objetivos={objetivos}
             selecao={selecao}
-            onSelecionar={setSelecao}
+            onSelecionar={selecionar}
           />
         </div>
+
+        <p className="text-center text-[#8b6f5c] text-xs leading-relaxed mt-1 px-4">
+          Toque em uma faceta para avaliar como você a sente — ou no centro para
+          declarar suas intenções.
+        </p>
 
         {facetasAvaliadas > 0 && (
           <PainelHistorico
@@ -128,7 +134,7 @@ export default function MapaPage() {
           />
         )}
 
-        <div className="mt-6 animate-in-up" key={selecao}>
+        <div ref={painelRef} className="mt-6 scroll-mt-4 animate-in-up" key={selecao}>
           {selecao === 'intencao' ? (
             <PainelIntencao
               objetivos={objetivos}
@@ -156,6 +162,8 @@ export default function MapaPage() {
           )}
         </div>
       </main>
+
+      <BottomNav />
     </div>
   )
 }

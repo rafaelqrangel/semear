@@ -41,7 +41,7 @@ export function Bloco4DespesasFixas({ dados, onChange, onAvancar, onVoltar }: Pr
       {/* Orientação: guarda-chuva, não meio de pagamento */}
       <div className="bg-white border border-[#e8d8ce] rounded-xl p-3">
         <p className="text-[#8b6f5c] text-sm leading-relaxed">
-          Some por <strong className="text-[#2d2620]">guarda-chuva</strong> (a
+          Some por <strong className="text-[#2d2620]">categoria</strong> (a
           conta), não pelo meio de pagamento. Tanto faz se você paga no cartão,
           no pix ou no débito — o que conta é o destino.
         </p>
