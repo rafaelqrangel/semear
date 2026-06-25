@@ -42,12 +42,13 @@ export default function MapaPage() {
   function selecionar(s: Selecao) {
     jaInteragiu.current = true
     setSelecao(s)
+    // rola mesmo quando a seleção não muda (ex.: centro já ativo)
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        painelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      ),
+    )
   }
-  useEffect(() => {
-    if (jaInteragiu.current) {
-      painelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [selecao])
 
   // Carrega do armazenamento local na montagem.
   useEffect(() => {
@@ -157,7 +158,7 @@ export default function MapaPage() {
               objetivos={objetivos}
               economia={economia}
               onPontuar={(n) => definirPontuacao(selecao, n)}
-              onIrParaCentro={() => setSelecao('intencao')}
+              onIrParaCentro={() => selecionar('intencao')}
             />
           )}
         </div>
@@ -269,9 +270,9 @@ function CartaoObjetivo({
   onEditar: () => void
   onRemover: (objId: string) => void
 }) {
-  const custoHoras =
-    economia && economia.vh > 0
-      ? objetivo.horasSemana * economia.vh * 4.33
+  const pctTempo =
+    economia && economia.tr > 0 && objetivo.horasSemana > 0
+      ? Math.round((objetivo.horasSemana / economia.tr) * 100)
       : null
 
   return (
@@ -323,8 +324,8 @@ function CartaoObjetivo({
                 {formatarHoras(objetivo.horasSemana)}
               </strong>{' '}
               por semana
-              {custoHoras
-                ? ` · ${formatarReais(custoHoras)}/mês do seu tempo`
+              {pctTempo != null
+                ? ` · ${pctTempo}% do seu tempo livre`
                 : ''}
             </span>
           )}
@@ -530,14 +531,25 @@ function FormularioObjetivo({
           </p>
         </div>
 
-        {economia && economia.vh > 0 && parseFloat(horas) > 0 && (
-          <p className="text-xs text-[#8b6f5c] bg-[#fdeee4] rounded-lg px-3 py-2">
-            As {formatarHoras(parseFloat(horas))} por semana que você dedica a
-            isso equivalem a cerca de{' '}
-            <strong className="text-[#2d2620]">
-              {formatarReais(parseFloat(horas) * economia.vh * 4.33)}
-            </strong>{' '}
-            do seu tempo por mês.
+        {economia && economia.tr > 0 && parseFloat(horas) > 0 && (
+          <p className="text-xs text-[#8b6f5c] bg-[#fdeee4] rounded-lg px-3 py-2 leading-relaxed">
+            {parseFloat(horas) >= economia.tr ? (
+              <>
+                Isso é mais do que todo o seu tempo livre
+                ({formatarHoras(economia.tr)}/semana). Para abrir espaço, algo
+                terá de sair de outra parte da sua vida.
+              </>
+            ) : (
+              <>
+                São{' '}
+                <strong className="text-[#2d2620]">
+                  {Math.round((parseFloat(horas) / economia.tr) * 100)}% do seu
+                  tempo livre
+                </strong>{' '}
+                ({formatarHoras(economia.tr)}/semana). Veja se há espaço real na
+                sua semana para isso.
+              </>
+            )}
           </p>
         )}
       </div>
